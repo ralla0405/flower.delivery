@@ -22,9 +22,6 @@ public class DeliveryCompany {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "delivery_fee")
-    private DeliveryFee deliveryFee;
-
     @OneToOne(mappedBy = "deliveryCompany", fetch = FetchType.LAZY)
     private Delivery delivery;
 }

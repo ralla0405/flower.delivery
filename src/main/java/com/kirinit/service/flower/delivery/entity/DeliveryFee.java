@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "deliveryFee")
+@Table(name = "deliveryfee")
 @Getter
 @Builder
 @NoArgsConstructor
@@ -25,4 +25,7 @@ public class DeliveryFee {
 
     @Column(name = "price")
     private int price;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private DeliveryCompany deliveryCompany;
 }
