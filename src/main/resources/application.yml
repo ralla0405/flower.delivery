@@ -1,0 +1,25 @@
+spring:
+  datasource:
+    url: jdbc:mariadb://localhost:3306/delivery
+    username: root
+    password: tmdghks10!
+    driver-class-name: org.mariadb.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+    database-platform: org.hibernate.dialect.MariaDB103Dialect
+    defer-datasource-initialization: true
+logging.level:
+  org.hibernate.SQL: debug
+  org.hibernate.type: trace
+
+# JWT
+#jwt:
+#  header: Authorization
+#  secret: Y29tLnNlcnZpY2Uua2lyaW5pdC50ZXN0LnNwcmluZ3NlY3VyaXR5Lmp3dHRva2VuLmF1dGhlbnRpY2F0ZS5hdXRob3JpemF0aW9u
+#  token-validity-in-seconds: 86400
+  #com.service.kirinit.test.springsecurity.jwttoken.authenticate.authorization
