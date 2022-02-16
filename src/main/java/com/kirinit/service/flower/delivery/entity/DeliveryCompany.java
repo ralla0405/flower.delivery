@@ -6,9 +6,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table(name = "deliverycompany")
+@Table(name = "delivery_company")
 @Getter
 @Builder
 @NoArgsConstructor
@@ -16,7 +18,7 @@ import javax.persistence.*;
 public class DeliveryCompany {
 
     @Id @GeneratedValue
-    @Column(name = "deliverycompany_id")
+    @Column(name = "delivery_company_id")
     private Long id;
 
     @Column(name = "name")
@@ -24,4 +26,7 @@ public class DeliveryCompany {
 
     @OneToOne(mappedBy = "deliveryCompany", fetch = FetchType.LAZY)
     private Delivery delivery;
+
+    @OneToMany(mappedBy = "deliveryCompany", cascade = CascadeType.ALL)
+    private List<DeliveryFee> deliveryFees = new ArrayList<>();
 }

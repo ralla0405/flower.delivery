@@ -1,0 +1,13 @@
+<!DOCTYPE HTML>
+<html lang="ko" class="h-100" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/config :: config"/>
+<body class="d-flex flex-column h-100">
+<header th:replace="fragments/loginHeader :: loginHeader"/>
+<main class="flex-shrink-0">
+    <div class="container h-100">
+        <h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE HTML>
+<html lang="ko" class="h-100" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/config :: config"/>
+<body class="d-flex flex-column h-100">
+<header th:replace="fragments/loginHeader :: loginHeader"/>
+<main class="flex-shrink-0">
+    <div class="container h-100">
+        <div class="row h-100 mt-5">
+            <div class="col-6 mx-auto">
+                <form action="@{/signup}" method="post">
+                    <div class="mb-3">
+                        <label th:for="userId" class="form-label">아이디</label>
+                        <input type="text" name="username" class="form-control" placeholder="아이디" required="required">
+                    </div>
+                    <div class="mb-3">
+                        <label th:for="password" class="form-label">패스워드</label>
+                        <input type="password" name="password" class="form-control" placeholder="패스워드" required="required">
+                    </div>
+                    <button type="submit" class="btn btn-lg btn-success">가입하기</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</main>
+<div th:replace="fragments/footer :: footer"/>
+</body>
+</html>

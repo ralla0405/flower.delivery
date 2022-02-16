@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "OrderCompany")
+@Table(name = "order_company")
 @Getter
 @Builder
 @NoArgsConstructor
@@ -16,7 +16,7 @@ import javax.persistence.*;
 public class OrderCompany {
     @Id
     @GeneratedValue
-    @Column(name = "ordercompany_id")
+    @Column(name = "order_company_id")
     private Long id;
 
     @Column(name = "name")

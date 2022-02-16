@@ -38,7 +38,7 @@ public class Delivery {
     private String address;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "deliverycompany_id")
+    @JoinColumn(name = "delivery_company_id")
     private DeliveryCompany deliveryCompany;
 
     @Column(name = "item_name")
@@ -54,7 +54,7 @@ public class Delivery {
     private String memo;
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "ordercompany_id")
+    @JoinColumn(name = "order_company_id")
     private OrderCompany orderCompany;
 
     @Column(name = "dispatch_no")
