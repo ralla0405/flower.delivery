@@ -18,25 +18,13 @@ public class EntityTest {
     @Test
     public void member() throws Exception {
         //given
-        Authority userAuthority = Authority.builder()
-                .authorityName("ROLE_USER")
-                .build();
-        Authority adminAuthority = Authority.builder()
-                .authorityName("ROLE_ADMIN")
-                .build();
-        Set<Authority> authoritiesSet = new HashSet<>();
-        authoritiesSet.add(userAuthority);
-        authoritiesSet.add(adminAuthority);
-
-        em.persist(userAuthority);
-        em.persist(adminAuthority);
 
         //when
         Member member = Member.builder()
-                .userId("admin")
-                .username("username")
+                .username("admin")
+                .name("username")
                 .password("admin")
-                .authorities(authoritiesSet)
+                .role("ROLE_ADMIN")
                 .build();
 
         em.persist(member);
@@ -48,8 +36,8 @@ public class EntityTest {
         List<Member> members = em.createQuery("select m from Member m", Member.class)
                 .getResultList();
         for (Member member1 : members) {
-            System.out.println("member1.getUserId() = " + member1.getUserId());
             System.out.println("member1.getUsername() = " + member1.getUsername());
+            System.out.println("member1.getName() = " + member1.getName());
             System.out.println("member1.getPassword() = " + member1.getPassword());
         }
 
@@ -59,16 +47,12 @@ public class EntityTest {
     @Test
     public void delivery() throws Exception {
         //given
-        Authority userAuthority = Authority.builder()
-                .authorityName("ROLE_USER")
-                .build();
-        em.persist(userAuthority);
 
         Member member = Member.builder()
-                .userId("user")
-                .username("username")
+                .username("user")
+                .name("username")
                 .password("user")
-                .authorities(Collections.singleton(userAuthority))
+                .role("ROLE_USER")
                 .build();
         em.persist(member);
 

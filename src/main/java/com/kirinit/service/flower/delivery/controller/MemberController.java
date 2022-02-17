@@ -28,6 +28,7 @@ public class MemberController {
     @PostMapping("/joinProc")
     public @ResponseBody String joinProc(MemberDto memberDto) {
         System.out.println(memberDto);
+        memberService.join(memberDto);
         return "join";
     }
 

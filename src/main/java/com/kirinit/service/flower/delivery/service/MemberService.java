@@ -1,8 +1,8 @@
 package com.kirinit.service.flower.delivery.service;
 
 import com.kirinit.service.flower.delivery.dto.MemberDto;
-import com.kirinit.service.flower.delivery.entity.Authority;
 import com.kirinit.service.flower.delivery.entity.Member;
+import com.kirinit.service.flower.delivery.entity.MemberRole;
 import com.kirinit.service.flower.delivery.repository.MemberRepository;
 import com.kirinit.service.flower.delivery.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
@@ -28,15 +28,11 @@ public class MemberService {
     @Transactional
     public Long join(MemberDto memberDto) {
         validateDuplicateMember(memberDto);
-        Authority authority = Authority.builder()
-                .authorityName("ROLE_USER")
-                .build();
-
         Member member = Member.builder()
             .username(memberDto.getUsername())
             .name(memberDto.getName())
             .password(passwordEncoder.encode(memberDto.getPassword()))
-            .authorities(Collections.singleton(authority))
+            .role(MemberRole.ROLE_USER)
             .build();
 
         memberRepository.save(member);

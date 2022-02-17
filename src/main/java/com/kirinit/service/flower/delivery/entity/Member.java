@@ -35,6 +35,7 @@ public class Member extends BaseEntity {
 //            inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")}
 //    )
 //    private Set<Authority> authorities;
-
-    private String role; // ROLE_USER, ROLE_ADMIN
+    @Enumerated(value = EnumType.STRING)
+    @Column(name = "role")
+    private MemberRole role; // ROLE_USER, ROLE_ADMIN
 }
