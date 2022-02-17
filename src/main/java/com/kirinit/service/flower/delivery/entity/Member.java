@@ -15,25 +15,26 @@ import java.util.Set;
 @AllArgsConstructor
 public class Member extends BaseEntity {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "member_id")
     private Long id;
 
-    @Column(name = "user_id", length = 30, unique = true)
-    private String userId;
-
-    @Column(name = "username", length = 100)
+    @Column(name = "username", length = 30, unique = true)
     private String username;
+
+    @Column(name = "name", length = 100)
+    private String name;
 
     @JsonIgnore
     @Column(name = "password", length = 100)
     private String password;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "member_authority",
-            joinColumns = {@JoinColumn(name = "member_id", referencedColumnName = "member_id")},
-            inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")}
-    )
-    private Set<Authority> authorities;
+//    @ManyToMany(cascade = CascadeType.ALL)
+//    @JoinTable(name = "member_authority",
+//            joinColumns = {@JoinColumn(name = "member_id", referencedColumnName = "member_id")},
+//            inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")}
+//    )
+//    private Set<Authority> authorities;
 
+    private String role; // ROLE_USER, ROLE_ADMIN
 }

@@ -13,11 +13,11 @@ public class MemberDto {
 
     @NotNull
     @Size(min = 3, max = 50)
-    private String userId;
+    private String username;
 
     @NotNull
     @Size(min = 3, max = 50)
-    private String username;
+    private String name;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @NotNull

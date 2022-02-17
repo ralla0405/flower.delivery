@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -17,8 +18,9 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@Configuration // IoC 빈(Bean)을 등록
+@EnableWebSecurity // 필터 체인 관리 시작 어노테이션
+@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true) // 특정 주소 접근시 권한 및 인증을 위한 어노테이션 활성화
 @AllArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
@@ -43,34 +45,32 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
+        http.csrf().disable();
+        http.authorizeRequests()
+            .antMatchers("/deliveries/**").authenticated()
+            .antMatchers("/members/**").access("hasRole('ROLE_ADMIN')")
+            .anyRequest().permitAll()
 
-                .exceptionHandling()
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .accessDeniedHandler(jwtAccessDeniedHandler)
+        .and()
+            .formLogin()
+            .loginPage("/login")
+            .loginProcessingUrl("/loginProc")
+            .defaultSuccessUrl("/deliveries");
+//        .and()
+//            .apply(new JwtSecurityConfig(tokenProvider));
+////                .exceptionHandling()
+//                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+//                .accessDeniedHandler(jwtAccessDeniedHandler)
+//
+//                .and()
+//                .headers()
+//                .frameOptions()
+//                .sameOrigin()
+//
+//                .and()
+//                .sessionManagement()
+//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 
-                .and()
-                .headers()
-                .frameOptions()
-                .sameOrigin()
 
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-
-                .and()
-                .authorizeRequests()
-                .antMatchers("/", "/login").permitAll()
-                .antMatchers("/members/**").access("hasRole('ROLE_ADMIN')")
-                .anyRequest().authenticated()
-
-                .and()
-                .formLogin()
-                .loginPage("/login")
-                .loginProcessingUrl("/authenticate")
-                .defaultSuccessUrl("/deliveries")
-                .and()
-                .apply(new JwtSecurityConfig(tokenProvider));
     }
 }

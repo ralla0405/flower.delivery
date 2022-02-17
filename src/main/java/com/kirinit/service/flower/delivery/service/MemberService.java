@@ -33,8 +33,8 @@ public class MemberService {
                 .build();
 
         Member member = Member.builder()
-            .userId(memberDto.getUserId())
             .username(memberDto.getUsername())
+            .name(memberDto.getName())
             .password(passwordEncoder.encode(memberDto.getPassword()))
             .authorities(Collections.singleton(authority))
             .build();
@@ -44,7 +44,7 @@ public class MemberService {
     }
 
     private void validateDuplicateMember(MemberDto memberDto) {
-        if (memberRepository.findMemberByUserId(memberDto.getUserId()).isPresent()) {
+        if (memberRepository.findMemberByUsername(memberDto.getUsername()).isPresent()) {
             throw new IllegalStateException("이미 존재하는 회원입니다.");
         }
     }
@@ -68,12 +68,12 @@ public class MemberService {
      */
     @Transactional(readOnly = true)
     public Optional<Member> getMemberWithAuthorities(String userId) {
-        return memberRepository.findOneWithAuthoritiesByUserId(userId);
+        return memberRepository.findOneWithAuthoritiesByUsername(userId);
 
     }
 
     @Transactional(readOnly = true)
     public Optional<Member> getMyMemberWithAuthorities() {
-        return SecurityUtil.getCurrentUsername().flatMap(memberRepository::findOneWithAuthoritiesByUserId);
+        return SecurityUtil.getCurrentUsername().flatMap(memberRepository::findOneWithAuthoritiesByUsername);
     }
 }

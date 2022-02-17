@@ -46,8 +46,8 @@ public class InitDb {
             authorities1.add(authority2);
 
             Member member = Member.builder()
-                .userId("admin")
-                .username("adminName")
+                .username("admin")
+                .name("adminName")
                 .password(passwordEncoder.encode("admin"))
                 .authorities(authorities1)
                 .build();
