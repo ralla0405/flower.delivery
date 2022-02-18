@@ -5,6 +5,9 @@ import com.kirinit.service.flower.delivery.entity.audit.BaseEntity;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -29,13 +32,8 @@ public class Member extends BaseEntity {
     @Column(name = "password", length = 100)
     private String password;
 
-//    @ManyToMany(cascade = CascadeType.ALL)
-//    @JoinTable(name = "member_authority",
-//            joinColumns = {@JoinColumn(name = "member_id", referencedColumnName = "member_id")},
-//            inverseJoinColumns = {@JoinColumn(name = "authority_name", referencedColumnName = "authority_name")}
-//    )
-//    private Set<Authority> authorities;
-    @Enumerated(value = EnumType.STRING)
     @Column(name = "role")
+    @Enumerated(EnumType.STRING)
     private MemberRole role; // ROLE_USER, ROLE_ADMIN
+
 }
