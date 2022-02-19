@@ -18,7 +18,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class Member extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue
     @Column(name = "member_id")
     private Long id;
 

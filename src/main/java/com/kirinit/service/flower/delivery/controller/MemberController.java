@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,6 +24,7 @@ import java.util.Objects;
 @Slf4j
 public class MemberController {
     private final MemberService memberService;
+    private final BCryptPasswordEncoder passwordEncoder;
 
     @GetMapping("/login")
     public String login(@AuthenticationPrincipal PrincipalDetails principal) {
@@ -34,19 +36,13 @@ public class MemberController {
     }
 
     @GetMapping("/members/new")
-    public String createForm(@AuthenticationPrincipal PrincipalDetails principal, Model model) {
-        for (GrantedAuthority auth : principal.getAuthorities()) {
-            if (Objects.equals(auth.getAuthority(), MemberRole.ROLE_USER.name())) {
-                System.out.println("auth.getAuthority() = " + auth.getAuthority());
-            }
-        }
+    public String createForm(Model model) {
         model.addAttribute("memberDto", new MemberDto());
         return "members/createMemberForm";
     }
 
     @PostMapping("/members/new")
-    @Secured("ROLE_ADMIN")
-    public String joinProc(MemberDto memberDto, BindingResult result) {
+    public String create(MemberDto memberDto, BindingResult result) {
 
         if (result.hasErrors()) {
             return "members/createMemberForm";
@@ -54,8 +50,9 @@ public class MemberController {
 
         Member member = Member.builder()
             .username(memberDto.getUsername())
-            .password(memberDto.getPassword())
+            .password(passwordEncoder.encode(memberDto.getPassword()))
             .name(memberDto.getName())
+            .role(MemberRole.ROLE_USER)
             .build();
 
         memberService.join(member);
