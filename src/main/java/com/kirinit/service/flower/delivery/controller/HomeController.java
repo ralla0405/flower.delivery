@@ -12,10 +12,6 @@ public class HomeController {
     @GetMapping("/")
     public String home(@AuthenticationPrincipal PrincipalDetails principal) {
         if (principal != null) {
-            for (GrantedAuthority auth : principal.getAuthorities()) {
-                // 권한이 ADMIN 일때 loginHeader -> adminHeader
-                System.out.println("auth.getAuthority() = " + auth.getAuthority());
-            }
             return "redirect:/deliveries";
         } else {
             return "home";

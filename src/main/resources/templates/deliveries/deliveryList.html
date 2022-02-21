@@ -1,12 +1,98 @@
 <!DOCTYPE HTML>
 <html lang="ko" class="h-100" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/config :: config"/>
+<head th:replace="fragments/config :: config"></head>
 <body class="d-flex flex-column h-100">
-<header th:replace="fragments/loginHeader :: loginHeader"/>
+<header th:replace="fragments/loginHeader :: loginHeader(${member.getName()}, ${member.getRole().name()})"></header>
 <main class="flex-shrink-0">
-    <div class="container h-100">
-        <h1 th:inline="text">Hello [[${#httpServletRequest.remoteUser}]]!</h1>
+    <div class="container h-100 mt-3">
+        <div>
+            <form th:object="${deliverySearch}" class="row justify-content-center mb-2">
+                <div class="col-2 mb-2" th:if="${member.getRole().name() == 'ROLE_ADMIN'}">
+                    <input type="text" th:field="*{memberId}" class="form-control" placeholder="회원id"/>
+                </div>
+                <div class="col-2 mx-sm-1 mb-2">
+                    <select th:field="*{deliveryStatus}" class="form-select">
+                        <option value="">배송상태</option>
+                        <option th:each="status : ${T(com.kirinit.service.flower.delivery.entity.DeliveryStatus).values()}"
+                                th:value="${status}"
+                                th:text="${status.getKrName()}">option
+                        </option>
+                    </select>
+                </div>
+                <div class="col-4 mx-sm-1 mb-2">
+                    <div class="row">
+                        <div class="col-5">
+                            <input th:field="*{startDate}" type="date" class="form-control" th:value="">
+                        </div>
+                        <span class="col-1 fw-bold">-</span>
+                        <div class="col-5">
+                            <input th:field="*{endDate}" type="date" class="form-control col-4" th:value="">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <button type="submit" class="btn btn-primary mb-2 col-4">검색</button>
+                </div>
+            </form>
+            <div class="row justify-content-center mb-2">
+                <div class="col-4 btn-group">
+                    <button type="button" class="btn btn-outline-info">그저께</button>
+                    <button type="button" class="btn btn-outline-info">어제</button>
+                    <button type="button" class="btn btn-outline-info">오늘</button>
+                    <button type="button" class="btn btn-outline-info">내일</button>
+                    <button type="button" class="btn btn-outline-info">모레</button>
+                </div>
+                <div class="col-4 btn-group">
+                    <button type="button" class="btn btn-outline-success">엑셀다운로드</button>
+                    <button type="button" class="btn btn-outline-primary">지도보기</button>
+                </div>
+            </div>
+        </div>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>순번</th>
+                    <th>배송일자</th>
+                    <th>배송시간</th>
+                    <th>주소</th>
+                    <th>받는분 전화</th>
 
+                    <th>받는분</th>
+                    <th>상품명</th>
+                    <th>리본문구</th>
+                    <th>발주업체</th>
+                    <th>발주업체전화</th>
+
+                    <th>배송업체</th>
+                    <th>배송비(원)</th>
+                    <th>배차번호</th>
+                    <th>처리</th>
+                    <th th:if="${member.getRole().name() == 'ROLE_ADMIN'}">작성자</th>
+                    <th>인수증</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="delivery : ${deliveries}">
+                    <td th:text="${delivery.no}"></td>
+                    <td th:text="${delivery.getFormatDate()}"></td>
+                    <td th:text="${delivery.time}"></td>
+                    <td th:text="${delivery.address}"></td>
+                    <td th:text="${delivery.toTel}"></td>
+                    <td th:text="${delivery.toName}"></td>
+                    <td th:text="${delivery.itemName}"></td>
+                    <td th:text="${delivery.memo}"></td>
+                    <td th:text="${delivery.orderCompany.getName()}"></td>
+                    <td th:text="${delivery.orderCompany.getTel()}"></td>
+                    <td th:text="${delivery.deliveryCompany.getName()}"></td>
+                    <td th:text="${delivery.deliveryCompany.getDeliveryFees().get(0).getPrice()}"></td>
+<!--                    <td th:text="${delivery.deliveryCompany.getDeliveryFees().get}"></td> 주소, 배송업체에 따라 배송비 변경-->
+                    <td th:text="${delivery.dispatchNo}"></td>
+                    <td>처리</td>
+                    <td th:if="${member.getRole().name() == 'ROLE_ADMIN'}" th:text="memberId"></td>
+                    <td>인수증</td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </main>
 </body>

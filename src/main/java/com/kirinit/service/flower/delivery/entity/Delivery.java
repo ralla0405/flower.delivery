@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "delivery")
@@ -63,4 +64,7 @@ public class Delivery {
     @Enumerated(EnumType.STRING)
     private DeliveryStatus status;
 
+    public String getFormatDate() {
+        return this.date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+    }
 }
