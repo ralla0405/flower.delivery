@@ -4,3 +4,11 @@
 main > .container {
     padding: 60px 15px 0;
 }
+.main-wrap {
+    width: 1500px;
+    margin: 0 auto;
+    padding: 60px 15px 0;
+}
+table {
+    font-size: 14px;
+}

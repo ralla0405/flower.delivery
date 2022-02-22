@@ -4,9 +4,9 @@
 <body class="d-flex flex-column h-100">
 <header th:replace="fragments/loginHeader :: loginHeader(${member.getName()}, ${member.getRole().name()})"></header>
 <main class="flex-shrink-0">
-    <div class="container h-100 mt-3">
+    <div class="main-wrap h-100 mt-3">
         <div>
-            <form th:object="${deliverySearch}" class="row justify-content-center mb-2">
+            <form th:object="${deliverySearch}" class="row justify-content-center mb-2 fs-5">
                 <div class="col-2 mb-2" th:if="${member.getRole().name() == 'ROLE_ADMIN'}">
                     <input type="text" th:field="*{memberId}" class="form-control" placeholder="회원id"/>
                 </div>
@@ -22,11 +22,11 @@
                 <div class="col-4 mx-sm-1 mb-2">
                     <div class="row">
                         <div class="col-5">
-                            <input th:field="*{startDate}" type="date" class="form-control" th:value="">
+                            <input th:field="*{startDate}" type="date" class="form-control col-4">
                         </div>
                         <span class="col-1 fw-bold">-</span>
                         <div class="col-5">
-                            <input th:field="*{endDate}" type="date" class="form-control col-4" th:value="">
+                            <input th:field="*{endDate}" type="date" class="form-control col-4">
                         </div>
                     </div>
                 </div>
@@ -46,18 +46,21 @@
                     <button type="button" class="btn btn-outline-success">엑셀다운로드</button>
                     <button type="button" class="btn btn-outline-primary">지도보기</button>
                 </div>
+                <div class="col-2 btn-group">
+                    <button type="button" class="btn btn-dark" th:onclick="|location.href='@{deliveries/new}'|">등록하기</button>
+                </div>
             </div>
         </div>
-        <table class="table table-striped">
+        <table class="table text-center">
             <thead>
                 <tr>
                     <th>순번</th>
                     <th>배송일자</th>
                     <th>배송시간</th>
                     <th>주소</th>
-                    <th>받는분 전화</th>
-
                     <th>받는분</th>
+
+                    <th>받는분 전화</th>
                     <th>상품명</th>
                     <th>리본문구</th>
                     <th>발주업체</th>
@@ -68,21 +71,24 @@
                     <th>배차번호</th>
                     <th>처리</th>
                     <th th:if="${member.getRole().name() == 'ROLE_ADMIN'}">작성자</th>
+
                     <th>인수증</th>
                 </tr>
             </thead>
             <tbody>
                 <tr th:each="delivery : ${deliveries}">
                     <td th:text="${delivery.no}"></td>
-                    <td th:text="${delivery.getFormatDate()}"></td>
+                    <td th:text="${delivery.date}"></td>
                     <td th:text="${delivery.time}"></td>
                     <td th:text="${delivery.address}"></td>
-                    <td th:text="${delivery.toTel}"></td>
                     <td th:text="${delivery.toName}"></td>
+
+                    <td th:text="${delivery.toTel}"></td>
                     <td th:text="${delivery.itemName}"></td>
                     <td th:text="${delivery.memo}"></td>
                     <td th:text="${delivery.orderCompany.getName()}"></td>
                     <td th:text="${delivery.orderCompany.getTel()}"></td>
+
                     <td th:text="${delivery.deliveryCompany.getName()}"></td>
                     <td th:text="${delivery.deliveryCompany.getDeliveryFees().get(0).getPrice()}"></td>
 <!--                    <td th:text="${delivery.deliveryCompany.getDeliveryFees().get}"></td> 주소, 배송업체에 따라 배송비 변경-->

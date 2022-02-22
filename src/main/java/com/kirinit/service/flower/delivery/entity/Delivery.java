@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -30,6 +31,7 @@ public class Delivery {
     private int no;
 
     @Column(name = "date")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime date;
 
     @Column(name = "time")
@@ -64,7 +66,4 @@ public class Delivery {
     @Enumerated(EnumType.STRING)
     private DeliveryStatus status;
 
-    public String getFormatDate() {
-        return this.date.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-    }
 }

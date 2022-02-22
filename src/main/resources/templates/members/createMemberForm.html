@@ -2,7 +2,7 @@
 <html lang="ko" class="h-100" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/config :: config"/>
 <body class="d-flex flex-column h-100">
-<header th:replace="fragments/loginHeader :: loginHeader"/>
+<header th:replace="fragments/loginHeader :: loginHeader(${member.getName()}, ${member.getRole().name()})"></header>
 <main class="flex-shrink-0">
     <div class="container h-100">
         <div class="row h-100 mt-5">

@@ -7,8 +7,6 @@ import com.kirinit.service.flower.delivery.entity.MemberRole;
 import com.kirinit.service.flower.delivery.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -16,8 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-
-import java.util.Objects;
 
 @Controller
 @RequiredArgsConstructor
@@ -36,8 +32,14 @@ public class MemberController {
     }
 
     @GetMapping("/members/new")
-    public String createForm(Model model) {
+    public String createForm(@AuthenticationPrincipal PrincipalDetails principal, Model model) {
+
+        // 멤버 정보
+        model.addAttribute("member", principal.getMember());
+
+        // Member dto
         model.addAttribute("memberDto", new MemberDto());
+
         return "members/createMemberForm";
     }
 
