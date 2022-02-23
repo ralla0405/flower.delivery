@@ -25,7 +25,4 @@ public class OrderCompany {
     @Column(name = "tel")
     private String tel;
 
-    @OneToOne(mappedBy = "orderCompany", fetch = FetchType.LAZY)
-    private Delivery delivery;
-
 }

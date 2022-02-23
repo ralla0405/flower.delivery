@@ -9,6 +9,12 @@ main > .container {
     margin: 0 auto;
     padding: 60px 15px 0;
 }
-table {
+table th{
     font-size: 14px;
+}
+table td, table tbody input {
+    font-size: 12px !important;
+}
+table th, table td {
+    padding: 15px 5px !important;
 }

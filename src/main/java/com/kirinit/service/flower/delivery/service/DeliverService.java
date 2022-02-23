@@ -19,7 +19,17 @@ public class DeliverService {
     /**
      * 배달 조회
      */
-    public List<Delivery> findDeliveries(LocalDateTime start, LocalDateTime end) {
+    public List<Delivery> findDeliveries(String start, String end) {
         return deliveryRepository.findAllByDateBetween(start, end);
+    }
+
+    /**
+     * 배달 저장
+     */
+    public Long insert(Delivery delivery) {
+        System.out.println("delivery ========= " + delivery.getMember().getName());
+        Delivery save = deliveryRepository.save(delivery);
+        System.out.println("save.toString() = " + save.toString());
+        return delivery.getId();
     }
 }

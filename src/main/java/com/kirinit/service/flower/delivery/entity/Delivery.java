@@ -1,10 +1,8 @@
 package com.kirinit.service.flower.delivery.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.kirinit.service.flower.delivery.entity.audit.BaseEntity;
+import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -17,7 +15,10 @@ import java.time.format.DateTimeFormatter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Delivery {
+@ToString(of = {"no", "date", "time", "address", "deliveryCompanyName", "price",
+        "itemName", "toName", "toTel", "memo", "orderCompanyName",
+        "orderCompanyTel", "dispatchNo", "status"})
+public class Delivery extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "delivery_id")
@@ -31,8 +32,7 @@ public class Delivery {
     private int no;
 
     @Column(name = "date")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime date;
+    private String date;
 
     @Column(name = "time")
     private String time;
@@ -40,9 +40,11 @@ public class Delivery {
     @Column(name = "address")
     private String address;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "delivery_company_id")
-    private DeliveryCompany deliveryCompany;
+    @Column(name = "delivery_company_name")
+    private String deliveryCompanyName;
+
+    @Column(name = "price")
+    private String price;
 
     @Column(name = "item_name")
     private String itemName;
@@ -56,14 +58,20 @@ public class Delivery {
     @Column(name = "memo")
     private String memo;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_company_id")
-    private OrderCompany orderCompany;
+    @Column(name = "odrer_company_name")
+    private String orderCompanyName;
+
+    @Column(name = "order_company_tel")
+    private String orderCompanyTel;
 
     @Column(name = "dispatch_no")
     private String dispatchNo;
 
     @Enumerated(EnumType.STRING)
     private DeliveryStatus status;
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
 
 }

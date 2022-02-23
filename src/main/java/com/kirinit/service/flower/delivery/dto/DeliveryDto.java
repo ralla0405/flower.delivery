@@ -2,15 +2,13 @@ package com.kirinit.service.flower.delivery.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDateTime;
+import lombok.ToString;
 
 @Getter @Setter
+@ToString(of = {"date", "time", "address", "toTel", "toName", "itemName", "memo", "orderCompanyName", "orderCompanyTel", "deliveryCompanyName", "price", "dispatchNo"})
 public class DeliveryDto {
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    private LocalDateTime date;
+    private String date;
     private String time;
     private String address;
     private String toTel;

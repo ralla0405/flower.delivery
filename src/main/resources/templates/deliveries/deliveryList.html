@@ -44,6 +44,7 @@
                 </div>
                 <div class="col-4 btn-group">
                     <button type="button" class="btn btn-outline-success">엑셀다운로드</button>
+                    <button type="button" class="btn btn-outline-warning">엑셀업로드</button>
                     <button type="button" class="btn btn-outline-primary">지도보기</button>
                 </div>
                 <div class="col-2 btn-group">
@@ -54,25 +55,23 @@
         <table class="table text-center">
             <thead>
                 <tr>
-                    <th>순번</th>
-                    <th>배송일자</th>
-                    <th>배송시간</th>
-                    <th>주소</th>
-                    <th>받는분</th>
+                    <th width="3%">순번</th>
+                    <th width="6%">배송일자</th>
+                    <th width="5%">배송시간</th>
+                    <th width="13%">주소</th>
+                    <th width="5%">받는분</th>
+                    <th width="8%">받는분 전화</th>
+                    <th width="5%">상품명</th>
+                    <th width="13%">리본문구</th>
+                    <th width="5%">발주업체</th>
+                    <th width="8%">발주업체전화</th>
+                    <th width="5%">배송업체</th>
+                    <th width="5%">배송비(원)</th>
+                    <th width="3%">배차번호</th>
+                    <th width="7%">처리</th>
+                    <th width="5%" th:if="${member.getRole().name() == 'ROLE_ADMIN'}">작성자</th>
 
-                    <th>받는분 전화</th>
-                    <th>상품명</th>
-                    <th>리본문구</th>
-                    <th>발주업체</th>
-                    <th>발주업체전화</th>
-
-                    <th>배송업체</th>
-                    <th>배송비(원)</th>
-                    <th>배차번호</th>
-                    <th>처리</th>
-                    <th th:if="${member.getRole().name() == 'ROLE_ADMIN'}">작성자</th>
-
-                    <th>인수증</th>
+                    <th width="4%">인수증</th>
                 </tr>
             </thead>
             <tbody>
@@ -86,11 +85,11 @@
                     <td th:text="${delivery.toTel}"></td>
                     <td th:text="${delivery.itemName}"></td>
                     <td th:text="${delivery.memo}"></td>
-                    <td th:text="${delivery.orderCompany.getName()}"></td>
-                    <td th:text="${delivery.orderCompany.getTel()}"></td>
+                    <td th:text="${delivery.orderCompanyName}"></td>
+                    <td th:text="${delivery.orderCompanyTel}"></td>
 
-                    <td th:text="${delivery.deliveryCompany.getName()}"></td>
-                    <td th:text="${delivery.deliveryCompany.getDeliveryFees().get(0).getPrice()}"></td>
+                    <td th:text="${delivery.deliveryCompanyName}"></td>
+                    <td th:text="${delivery.price}"></td>
 <!--                    <td th:text="${delivery.deliveryCompany.getDeliveryFees().get}"></td> 주소, 배송업체에 따라 배송비 변경-->
                     <td th:text="${delivery.dispatchNo}"></td>
                     <td>처리</td>

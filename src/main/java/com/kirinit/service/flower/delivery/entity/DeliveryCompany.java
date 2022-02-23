@@ -24,9 +24,6 @@ public class DeliveryCompany {
     @Column(name = "name")
     private String name;
 
-    @OneToOne(mappedBy = "deliveryCompany", fetch = FetchType.LAZY)
-    private Delivery delivery;
-
     @OneToMany(mappedBy = "deliveryCompany", cascade = CascadeType.ALL)
     private List<DeliveryFee> deliveryFees = new ArrayList<>();
 }
