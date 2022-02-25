@@ -62,48 +62,50 @@ public class DeliveryController {
     }
 
     @PostMapping("/deliveries/new")
-    @ResponseBody
     public String create(@AuthenticationPrincipal PrincipalDetails principal,
-                                 @RequestBody List<DeliveryDto> deliveryDtoList,
+                                 DeliveryDto deliveryDto,
                                  BindingResult result) {
 
         if (result.hasErrors()) {
             return "redirect:/deliveries";
         }
 
-        // 여러 배달 dto 를 받아서 저장
-        for (DeliveryDto deliveryDto : deliveryDtoList) {
-            // 해당 배송일자로 검색하여 최대 no값 구하기
-            String start = deliveryDto.getDate();
-            String end = LocalDateTime.of(LocalDate.parse(deliveryDto.getDate()).plusDays(1), LocalTime.of(0,0,0)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            List<Delivery> deliveries = deliverService.findDeliveries(start, end);
-            Delivery delivery = deliveries.stream()
-                    .max(Comparator.comparing(Delivery::getNo))
-                    .orElse(new Delivery());
-            int no = delivery.getNo() == 0 ? 1 : delivery.getNo();
-            // Delivery 객체 생성
-            Delivery insertDelivery = Delivery.builder()
-                    .member(principal.getMember())
-                    .no(no)
-                    .date(deliveryDto.getDate())
-                    .time(deliveryDto.getTime())
-                    .address(deliveryDto.getAddress())
-                    .toName(deliveryDto.getToName())
-                    .toTel(deliveryDto.getToTel())
-                    .itemName(deliveryDto.getItemName())
-                    .memo(deliveryDto.getMemo())
-                    .orderCompanyName(deliveryDto.getOrderCompanyName())
-                    .orderCompanyTel(deliveryDto.getOrderCompanyTel())
-                    .deliveryCompanyName(deliveryDto.getDeliveryCompanyName())
-                    .price(deliveryDto.getPrice())
-                    .dispatchNo(deliveryDto.getDispatchNo())
-                    .status(DeliveryStatus.READY)
-                    .build();
-            System.out.println("insertDelivery.toString() = " + insertDelivery.toString());
-            // DB에 저장
-            deliverService.insert(insertDelivery);
-        }
+        // 해당 배송일자로 검색하여 최대 no값 구하기
+        String start = deliveryDto.getDate();
+        String end = LocalDateTime.of(LocalDate.parse(deliveryDto.getDate()).plusDays(1), LocalTime.of(0,0,0)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        List<Delivery> deliveries = deliverService.findDeliveries(start, end);
+        Delivery delivery = deliveries.stream()
+                .max(Comparator.comparing(Delivery::getNo))
+                .orElse(new Delivery());
+        int no = delivery.getNo() == 0 ? 1 : delivery.getNo();
 
+        // Delivery 객체 생성
+        Delivery insertDelivery = Delivery.builder()
+                .member(principal.getMember())
+                .no(no)
+                .date(deliveryDto.getDate())
+                .time(deliveryDto.getTime())
+                .address(deliveryDto.getAddress())
+                .toName(deliveryDto.getToName())
+                .toTel(deliveryDto.getToTel())
+                .itemName(deliveryDto.getItemName())
+                .memo(deliveryDto.getMemo())
+                .orderCompanyName(deliveryDto.getOrderCompanyName())
+                .orderCompanyTel(deliveryDto.getOrderCompanyTel())
+                .deliveryCompanyName(deliveryDto.getDeliveryCompanyName())
+                .price(deliveryDto.getPrice())
+                .dispatchNo(deliveryDto.getDispatchNo())
+                .status(DeliveryStatus.READY)
+                .build();
+        System.out.println("insertDelivery.toString() = " + insertDelivery.toString());
+        // DB에 저장
+        deliverService.insert(insertDelivery);
+        // 여러 배달 dto 를 받아서 저장
+//        for (DeliveryDto deliveryDto : deliveryDtoList) {
+//
+//        }
+
+        System.out.println("checkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
         return "redirect:/deliveries";
     }
 }

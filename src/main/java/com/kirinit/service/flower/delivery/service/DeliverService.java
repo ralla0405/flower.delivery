@@ -29,7 +29,7 @@ public class DeliverService {
     public Long insert(Delivery delivery) {
         System.out.println("delivery ========= " + delivery.getMember().getName());
         Delivery save = deliveryRepository.save(delivery);
-        System.out.println("save.toString() = " + save.toString());
+        System.out.println("save.toString() = " + save);
         return delivery.getId();
     }
 }

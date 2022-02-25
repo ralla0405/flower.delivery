@@ -1,6 +1,7 @@
 package com.kirinit.service.flower.delivery.entity;
 
-import com.kirinit.service.flower.delivery.repository.DeliveryRepository;
+import com.kirinit.service.flower.delivery.service.DeliverService;
+import com.kirinit.service.flower.delivery.service.MemberService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,7 +17,8 @@ import java.util.*;
 @Transactional
 public class EntityTest {
     @Autowired EntityManager em;
-    @Autowired private DeliveryRepository deliveryRepository;
+    @Autowired private MemberService memberService;
+    @Autowired private DeliverService deliverService;
 
     @Test
     public void member() throws Exception {
@@ -47,39 +49,38 @@ public class EntityTest {
     }
 
     @Test
+    @Rollback(value = false)
     public void delivery() throws Exception {
         //given
 
-        Member member = Member.builder()
-                .username("user")
-                .name("username")
-                .password("user")
-                .role(MemberRole.ROLE_USER)
-                .build();
-        em.persist(member);
+        Optional<Member> member = memberService.findMember(6L);
 
         //when
+//        Delivery delivery = Delivery.builder()
+//                .member(member.get())
+//                .no(1)
+//                .date(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
+//                .time("16:12")
+//                .address("경기도 광주시 신현리 968-2 302호")
+//                .deliveryCompanyName("시노")
+//                .price("10000")
+//                .itemName("율마")
+//                .toName("너에게")
+//                .toTel("02-0000-0000")
+//                .memo("메모해주세요.")
+//                .orderCompanyName("ㅏ아니")
+//                .orderCompanyTel("02-2099-984")
+//                .dispatchNo("2")
+//                .status(DeliveryStatus.READY)
+//                .build();
         Delivery delivery = Delivery.builder()
-                .member(member)
+                .member(member.get())
                 .no(1)
                 .date(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")))
-                .time("16:12")
                 .address("경기도 광주시 신현리 968-2 302호")
-                .deliveryCompanyName("시노")
-                .price("10000")
-                .itemName("율마")
-                .toName("너에게")
-                .toTel("02-0000-0000")
-                .memo("메모해주세요.")
-                .orderCompanyName("ㅏ아니")
-                .orderCompanyTel("02-2099-984")
-                .dispatchNo("2")
                 .status(DeliveryStatus.READY)
                 .build();
-        em.persist(delivery);
-
-        em.flush();
-        em.clear();
+        deliverService.insert(delivery);
 
         //then
         // 한번에 조회 하는 방법 찾아야함
