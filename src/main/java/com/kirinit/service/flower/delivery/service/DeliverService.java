@@ -26,10 +26,11 @@ public class DeliverService {
     /**
      * 배달 저장
      */
+    @Transactional
     public Long insert(Delivery delivery) {
-        System.out.println("delivery ========= " + delivery.getMember().getName());
+        System.out.println("delivery ========= " + delivery.getCreatedBy());
+        System.out.println("delivery = " + delivery.getLastModifiedDate());
         Delivery save = deliveryRepository.save(delivery);
-        System.out.println("save.toString() = " + save);
         return delivery.getId();
     }
 }

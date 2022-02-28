@@ -12,69 +12,69 @@
                 </div>
             </div>
         </div>
-        <table class="table text-center" th:object="${deliveryDto}">
+        <table class="table text-center">
             <thead>
-                <tr>
-                    <th width="9%">배송일자</th>
-                    <th width="5%">배송시간</th>
-                    <th width="15%">주소</th>
-                    <th width="5%">받는분</th>
+            <tr>
+                <th width="9%">배송일자</th>
+                <th width="5%">배송시간</th>
+                <th width="15%">주소</th>
+                <th width="5%">받는분</th>
 
-                    <th width="8%">받는분 전화</th>
-                    <th width="8%">상품명</th>
-                    <th width="15%">리본문구</th>
-                    <th width="5%">발주업체</th>
-                    <th width="8%">발주업체전화</th>
+                <th width="8%">받는분 전화</th>
+                <th width="8%">상품명</th>
+                <th width="15%">리본문구</th>
+                <th width="5%">발주업체</th>
+                <th width="8%">발주업체전화</th>
 
-                    <th width="5%">배송업체</th>
-                    <th width="5%">배송비(원)</th>
-                    <th width="5%">배차번호</th>
-                    <th width="7%">처리</th>
-                </tr>
+                <th width="5%">배송업체</th>
+                <th width="5%">배송비(원)</th>
+                <th width="5%">배차번호</th>
+                <th width="7%">처리</th>
+            </tr>
             </thead>
             <tbody>
-                <tr class="tbl-cont">
-                    <td>
-                        <input type="date" th:field="*{date}" class="form-control">
-                    </td>
-                    <td>
-                        <input type="text" th:field="*{time}" class="form-control">
-                    </td>
-                    <td>
-                        <input type="text" th:field="*{address}" class="form-control">
-                    </td>
-                    <td>
-                        <input type="text" th:field="*{toName}" class="form-control">
-                    </td>
-                    <td>
-                        <input type="text" th:field="*{toTel}" class="form-control">
-                    </td>
-                    <td>
-                        <input type="text" th:field="*{itemName}" class="form-control">
-                    </td>
-                    <td>
-                        <input type="text" th:field="*{memo}" class="form-control">
-                    </td>
-                    <td>
-                        <input type="text" th:field="*{orderCompanyName}" class="form-control">
-                        <!-- 배송업체 리스트 불러오기 -->
-                    </td>
-                    <td>
-                        <input type="text" th:field="*{orderCompanyTel}" class="form-control">
-                    </td>
-                    <td>
-                        <input type="text" th:field="*{deliveryCompanyName}" class="form-control">
-                    </td>
-                    <td>
-                        <input type="text" th:field="*{price}" class="form-control">
-                    </td>
-                    <td>
-                        <input type="text" th:field="*{dispatchNo}" class="form-control">
-                    </td>
-                    <td>
-                        <input type="button" class="btn btn-success plusDelivery" value="추가" onclick="plusBoard(this)">
-                    </td>
-                </tr>
+            <tr class="tbl-cont" th:object="${deliveryDto}">
+                <td>
+                    <input type="date" th:field="*{date}" class="form-control">
+                </td>
+                <td>
+                    <input type="text" th:field="*{time}" class="form-control">
+                </td>
+                <td>
+                    <input type="text" th:field="*{address}" class="form-control">
+                </td>
+                <td>
+                    <input type="text" th:field="*{toName}" class="form-control">
+                </td>
+                <td>
+                    <input type="text" th:field="*{toTel}" class="form-control">
+                </td>
+                <td>
+                    <input type="text" th:field="*{itemName}" class="form-control">
+                </td>
+                <td>
+                    <input type="text" th:field="*{memo}" class="form-control">
+                </td>
+                <td>
+                    <input type="text" th:field="*{orderCompanyName}" class="form-control">
+                    <!-- 배송업체 리스트 불러오기 -->
+                </td>
+                <td>
+                    <input type="text" th:field="*{orderCompanyTel}" class="form-control">
+                </td>
+                <td>
+                    <input type="text" th:field="*{deliveryCompanyName}" class="form-control">
+                </td>
+                <td>
+                    <input type="text" th:field="*{price}" class="form-control">
+                </td>
+                <td>
+                    <input type="text" th:field="*{dispatchNo}" class="form-control">
+                </td>
+                <td>
+                    <input type="button" class="btn btn-success plusDelivery" value="추가" onclick="plusBoard(this)">
+                </td>
+            </tr>
             </tbody>
         </table>
         <div class="row justify-content-center">
@@ -102,14 +102,16 @@
                     obj.dispatchNo = $(htmlElement).find("input[name=dispatchNo]").val();
                     jsonArray.push(obj);
                 }
-                $.ajax({
-                    type: 'POST',
-                    url: '/deliveries/new',
-                    data: JSON.stringify(jsonArray),
-                    dataType: 'json',
-                    contentType: 'application/json',
-                    cache: false
-                });
+                let msg = JSON.stringify(jsonArray);
+                let callback = function (data) {
+                    if (data.resultCode == "0000") {
+                        alert(data.resultMessage);
+                        location.href = "/deliveries";
+                    } else {
+                        alert(data.resultMessage);
+                    }
+                }
+                doPost("/deliveries/new", msg, callback);
             });
             function plusBoard(obj)  {
                 var date = $(obj).parent("td").parent("tr").find("input[name=date]").val();

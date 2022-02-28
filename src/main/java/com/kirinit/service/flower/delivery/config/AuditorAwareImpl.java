@@ -1,20 +1,15 @@
 package com.kirinit.service.flower.delivery.config;
 
-import com.kirinit.service.flower.delivery.entity.Member;
+import com.kirinit.service.flower.delivery.util.SecurityUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.AuditorAware;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-
-import java.util.Collection;
 import java.util.Optional;
 
-public class AuditorAwareImpl implements AuditorAware<Member> {
+@Slf4j
+public class AuditorAwareImpl implements AuditorAware<String> {
 
     @Override
-    public Optional<Member> getCurrentAuditor() {
-
-        // spring security 로그인 정보에서 ID를 받아 return
-
-        return Optional.empty();
+    public Optional<String> getCurrentAuditor() {
+        return SecurityUtil.getCurrentUsername();
     }
 }

@@ -40,20 +40,14 @@ public class Delivery extends BaseEntity {
     @Column(name = "address")
     private String address;
 
-    @Column(name = "delivery_company_name")
-    private String deliveryCompanyName;
-
-    @Column(name = "price")
-    private String price;
-
-    @Column(name = "item_name")
-    private String itemName;
+    @Column(name = "to_tel")
+    private String toTel;
 
     @Column(name = "to_name")
     private String toName;
 
-    @Column(name = "to_tel")
-    private String toTel;
+    @Column(name = "item_name")
+    private String itemName;
 
     @Column(name = "memo")
     private String memo;
@@ -64,14 +58,16 @@ public class Delivery extends BaseEntity {
     @Column(name = "order_company_tel")
     private String orderCompanyTel;
 
+    @Column(name = "delivery_company_name")
+    private String deliveryCompanyName;
+
+    @Column(name = "price")
+    private String price;
+
     @Column(name = "dispatch_no")
     private String dispatchNo;
 
     @Enumerated(EnumType.STRING)
     private DeliveryStatus status;
-
-    public void setMember(Member member) {
-        this.member = member;
-    }
 
 }

@@ -2,15 +2,20 @@ package com.kirinit.service.flower.delivery.controller;
 
 import com.kirinit.service.flower.delivery.config.auth.PrincipalDetails;
 import com.kirinit.service.flower.delivery.dto.DeliveryDto;
+import com.kirinit.service.flower.delivery.dto.ResponseDto;
 import com.kirinit.service.flower.delivery.entity.Delivery;
 import com.kirinit.service.flower.delivery.entity.DeliverySearch;
 import com.kirinit.service.flower.delivery.entity.DeliveryStatus;
 import com.kirinit.service.flower.delivery.service.DeliverService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -62,25 +67,35 @@ public class DeliveryController {
     }
 
     @PostMapping("/deliveries/new")
-    public String create(@AuthenticationPrincipal PrincipalDetails principal,
-                                 DeliveryDto deliveryDto,
-                                 BindingResult result) {
+    @ResponseBody
+    public ResponseEntity<ResponseDto> create(@AuthenticationPrincipal PrincipalDetails principal,
+                                                     @RequestBody List<DeliveryDto> deliveryDtoList,
+                                                     BindingResult result) {
 
         if (result.hasErrors()) {
-            return "redirect:/deliveries";
+            ResponseDto responseDto = ResponseDto.builder()
+                    .resultCode("9999")
+                    .resultMessage("서버 오류입니다.")
+                    .build();
+
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }
 
-        // 해당 배송일자로 검색하여 최대 no값 구하기
-        String start = deliveryDto.getDate();
-        String end = LocalDateTime.of(LocalDate.parse(deliveryDto.getDate()).plusDays(1), LocalTime.of(0,0,0)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        List<Delivery> deliveries = deliverService.findDeliveries(start, end);
-        Delivery delivery = deliveries.stream()
-                .max(Comparator.comparing(Delivery::getNo))
-                .orElse(new Delivery());
-        int no = delivery.getNo() == 0 ? 1 : delivery.getNo();
+        // 여러 배달 dto 를 받아서 저장
+        for (DeliveryDto deliveryDto : deliveryDtoList) {
 
-        // Delivery 객체 생성
-        Delivery insertDelivery = Delivery.builder()
+            // 해당 배송일자로 검색하여 최대 no값 구하기
+            String start = deliveryDto.getDate();
+            String end = LocalDateTime.of(LocalDate.parse(deliveryDto.getDate()).plusDays(1), LocalTime.of(0,0,0)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            List<Delivery> deliveries = deliverService.findDeliveries(start, end);
+            Delivery delivery = deliveries.stream()
+                    .max(Comparator.comparing(Delivery::getNo))
+                    .orElse(new Delivery());
+            int no = delivery.getNo() == 0 ? 1 : delivery.getNo();
+            System.out.println("no = " + no);
+
+            // Delivery 객체 생성
+            Delivery insertDelivery = Delivery.builder()
                 .member(principal.getMember())
                 .no(no)
                 .date(deliveryDto.getDate())
@@ -97,15 +112,15 @@ public class DeliveryController {
                 .dispatchNo(deliveryDto.getDispatchNo())
                 .status(DeliveryStatus.READY)
                 .build();
-        System.out.println("insertDelivery.toString() = " + insertDelivery.toString());
-        // DB에 저장
-        deliverService.insert(insertDelivery);
-        // 여러 배달 dto 를 받아서 저장
-//        for (DeliveryDto deliveryDto : deliveryDtoList) {
-//
-//        }
+            // DB에 저장
+            deliverService.insert(insertDelivery);
+        }
 
-        System.out.println("checkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");
-        return "redirect:/deliveries";
+        ResponseDto responseDto = ResponseDto.builder()
+                .resultCode("0000")
+                .resultMessage("정상 처리 되었습니다.")
+                .build();
+
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
     }
 }
