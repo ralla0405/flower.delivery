@@ -1,13 +1,9 @@
 package com.kirinit.service.flower.delivery.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kirinit.service.flower.delivery.entity.audit.BaseEntity;
 import lombok.*;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "delivery")
@@ -58,8 +54,9 @@ public class Delivery extends BaseEntity {
     @Column(name = "order_company_tel")
     private String orderCompanyTel;
 
-    @Column(name = "delivery_company_name")
-    private String deliveryCompanyName;
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "delivery_company")
+    private DeliveryCompany deliveryCompany;
 
     @Column(name = "price")
     private String price;

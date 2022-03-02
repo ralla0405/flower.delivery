@@ -1,0 +1,105 @@
+<!DOCTYPE HTML>
+<html lang="ko" class="h-100" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/config :: config"/>
+<body class="d-flex flex-column h-100">
+<header th:replace="fragments/loginHeader :: loginHeader(${member.getName()}, ${member.getRole().name()})"></header>
+<main class="flex-shrink-0">
+    <div class="main-wrap h-100 mt-3">
+        <div>
+            <h2>배송비 등록하기</h2>
+            <div class="row justify-content-start mb-2">
+                <div class="col-2 btn-group">
+                    <button type="button" class="btn btn-outline-dark" th:onclick="|location.href='@{/deliveryFees}'|">목록으로</button>
+                </div>
+            </div>
+        </div>
+        <table class="table text-center">
+            <thead>
+            <tr>
+                <th width="30%">업체명</th>
+                <th width="30%">구역명</th>
+                <th width="25%">가격</th>
+                <th width="15%">처리</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="tbl-cont" th:object="${deliveryFeeDto}" th:if="${deliveryCompanies.size() != 0}">
+                <td>
+                    <select th:field="*{deliveryCompanyDto}" class="form-select">
+                        <option th:each="deliveryCompany : ${deliveryCompanies}"
+                                th:value="${deliveryCompany.getId()}"
+                                th:text="${deliveryCompany.getName()}"></option>
+                    </select>
+                </td>
+                <td>
+                    <input type="text" th:field="*{areaName}" class="form-control" style="width:90%;margin:0 auto;">
+                </td>
+                <td>
+                    <input type="text" th:field="*{price}" class="form-control" style="width:90%;margin:0 auto;">
+                </td>
+                <td>
+                    <input type="button" class="btn btn-success" value="추가" onclick="plusBoard(this)">
+                </td>
+            </tr>
+            <tr th:unless="${deliveryCompanies.size() != 0}">
+                <td colspan="4">
+                    <span>배송업체를 먼저 등록해주세요.</span><a href="/deliveryCompanies">배송업체관리</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="row justify-content-center">
+            <div class="col-1 btn-group">
+                <button type="submit" class="btn btn-outline-primary register">등록하기</button>
+            </div>
+        </div>
+        <script th:inline="javascript">
+            $(".register").click(function () {
+                let html = $(".tbl-cont");
+                let jsonArray = [];
+                for (const htmlElement of html) {
+                    let obj = {};
+                    obj.deliveryCompanyDto = {
+                        id: $(htmlElement).find("select[name=deliveryCompanyDto]").val()
+                    };
+                    obj.areaName = $(htmlElement).find("input[name=areaName]").val();
+                    obj.price = Number($(htmlElement).find("input[name=price]").val());
+                    console.log(obj);
+                    if (obj.areaName === "" || obj.price === "") {
+                        alert("입력란을 모두 작성해주세요.");
+                        return false;
+                    }
+                    jsonArray.push(obj);
+                }
+                let msg = JSON.stringify(jsonArray);
+                let callback = function (data) {
+                    if (data.resultCode == "0000") {
+                        alert(data.resultMessage);
+                        location.href = "/deliveryFees";
+                    } else {
+                        alert(data.resultMessage);
+                    }
+                }
+                doPost("/deliveryFees/new", msg, callback);
+            });
+            function plusBoard(obj)  {
+                var select = $(obj).parent("td").parent("tr").find("select").html();
+                var html = "<tr class='tbl-cont'>";
+                html += "<td><select class='form-select' id='deliveryCompanyDto' name='deliveryCompanyDto'>";
+                html += select;
+                html += "</select></td>";
+                html += "<td><input type='text' id='areaName' name='areaName' class='form-control' style='width:90%;margin:0 auto;'></td>";
+                html += "<td><input type='text' id='price' name='price' class='form-control' style='width:90%;margin:0 auto;'></td>";
+                html += "<td><input type='button' class='btn btn-success' value='추가' onclick='plusBoard(this)'></td>";
+                html += "</tr>";
+                $(obj).parent("td").html("<input type='button' class='btn btn-danger' value='삭제' onclick='deleteBoard(this)'>");
+                $('tbody').append(html);
+            }
+            function deleteBoard(obj) {
+                $(obj).parent("td").parent("tr").remove();
+            }
+        </script>
+    </div>
+</main>
+</body>
+</html>

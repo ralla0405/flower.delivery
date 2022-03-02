@@ -6,6 +6,7 @@
 <main class="flex-shrink-0">
     <div class="main-wrap h-100 mt-3">
         <div>
+            <h2>배달 등록하기</h2>
             <div class="row justify-content-start mb-2">
                 <div class="col-2 btn-group">
                     <button type="button" class="btn btn-outline-dark" th:onclick="|location.href='@{/}'|">목록으로</button>
@@ -63,7 +64,13 @@
                     <input type="text" th:field="*{orderCompanyTel}" class="form-control">
                 </td>
                 <td>
-                    <input type="text" th:field="*{deliveryCompanyName}" class="form-control">
+                    <select th:field="*{deliveryCompany}" class="form-select" th:if="${deliveryCompanies.size() != 0}">
+                        <option th:each="deliveryCompany : ${deliveryCompanies}"
+                                th:value="${deliveryCompany.getName()}"
+                                th:text="${deliveryCompany.getName()}">
+                        </option>
+                    </select>
+                    <input th:filed="*{deliveryCompany}" class="form-control" th:unless="${deliveryCompanies.size() != 0}">
                 </td>
                 <td>
                     <input type="text" th:field="*{price}" class="form-control">

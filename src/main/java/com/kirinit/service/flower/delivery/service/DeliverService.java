@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -27,10 +26,8 @@ public class DeliverService {
      * 배달 저장
      */
     @Transactional
-    public Long insert(Delivery delivery) {
-        System.out.println("delivery ========= " + delivery.getCreatedBy());
-        System.out.println("delivery = " + delivery.getLastModifiedDate());
-        Delivery save = deliveryRepository.save(delivery);
+    public Long Delivery(Delivery delivery) {
+        deliveryRepository.save(delivery);
         return delivery.getId();
     }
 }

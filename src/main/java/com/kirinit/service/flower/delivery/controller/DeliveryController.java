@@ -4,9 +4,11 @@ import com.kirinit.service.flower.delivery.config.auth.PrincipalDetails;
 import com.kirinit.service.flower.delivery.dto.DeliveryDto;
 import com.kirinit.service.flower.delivery.dto.ResponseDto;
 import com.kirinit.service.flower.delivery.entity.Delivery;
+import com.kirinit.service.flower.delivery.entity.DeliveryCompany;
 import com.kirinit.service.flower.delivery.entity.DeliverySearch;
 import com.kirinit.service.flower.delivery.entity.DeliveryStatus;
 import com.kirinit.service.flower.delivery.service.DeliverService;
+import com.kirinit.service.flower.delivery.service.DeliveryCompanyService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -30,26 +32,7 @@ import java.util.List;
 public class DeliveryController {
 
     private final DeliverService deliverService;
-
-    @GetMapping("/deliveries")
-    public String deliveries(@AuthenticationPrincipal PrincipalDetails principal,
-                             @ModelAttribute("deliverySearch") DeliverySearch deliverySearch,
-                             Model model) {
-        // 멤버 정보
-        model.addAttribute("member", principal.getMember());
-
-        // 배송조회 기간
-        String start = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        String end = LocalDateTime.now().plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        deliverySearch.setStartDate(LocalDateTime.now());
-        deliverySearch.setEndDate(LocalDateTime.now().plusDays(1));
-
-        // 배송리스트
-        List<Delivery> deliveries = deliverService.findDeliveries(start, end);
-        model.addAttribute("deliveries", deliveries);
-
-        return "deliveries/deliveryList";
-    }
+    private final DeliveryCompanyService deliveryCompanyService;
 
     @GetMapping("/deliveries/new")
     public String createForm(@AuthenticationPrincipal PrincipalDetails principal,
@@ -59,7 +42,10 @@ public class DeliveryController {
         // 멤버 정보
         model.addAttribute("member", principal.getMember());
 
-        // Delivery Dto
+        // 배송업체 정보
+        model.addAttribute("deliveryCompanies", deliveryCompanyService.findDeliveryCompanies());
+
+        // 배달 Dto
         deliveryDto.setDate(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
         model.addAttribute("deliveryDto", deliveryDto);
 
@@ -86,13 +72,14 @@ public class DeliveryController {
 
             // 해당 배송일자로 검색하여 최대 no값 구하기
             String start = deliveryDto.getDate();
-            String end = LocalDateTime.of(LocalDate.parse(deliveryDto.getDate()).plusDays(1), LocalTime.of(0,0,0)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            String end = LocalDateTime.of(
+                    LocalDate.parse(deliveryDto.getDate()).plusDays(1),
+                    LocalTime.of(0,0,0)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             List<Delivery> deliveries = deliverService.findDeliveries(start, end);
             Delivery delivery = deliveries.stream()
                     .max(Comparator.comparing(Delivery::getNo))
                     .orElse(new Delivery());
-            int no = delivery.getNo() == 0 ? 1 : delivery.getNo();
-            System.out.println("no = " + no);
+            int no = delivery.getNo() == 0 ? 1 : (delivery.getNo() + 1);
 
             // Delivery 객체 생성
             Delivery insertDelivery = Delivery.builder()
@@ -107,13 +94,13 @@ public class DeliveryController {
                 .memo(deliveryDto.getMemo())
                 .orderCompanyName(deliveryDto.getOrderCompanyName())
                 .orderCompanyTel(deliveryDto.getOrderCompanyTel())
-                .deliveryCompanyName(deliveryDto.getDeliveryCompanyName())
+                .deliveryCompany(deliveryDto.getDeliveryCompany())
                 .price(deliveryDto.getPrice())
                 .dispatchNo(deliveryDto.getDispatchNo())
                 .status(DeliveryStatus.READY)
                 .build();
             // DB에 저장
-            deliverService.insert(insertDelivery);
+            deliverService.Delivery(insertDelivery);
         }
 
         ResponseDto responseDto = ResponseDto.builder()
@@ -122,5 +109,25 @@ public class DeliveryController {
                 .build();
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
+
+    @GetMapping("/deliveries")
+    public String deliveries(@AuthenticationPrincipal PrincipalDetails principal,
+                             @ModelAttribute("deliverySearch") DeliverySearch deliverySearch,
+                             Model model) {
+        // 멤버 정보
+        model.addAttribute("member", principal.getMember());
+
+        // 배송조회 기간
+        String start = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        String end = LocalDateTime.now().plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+        deliverySearch.setStartDate(LocalDateTime.now());
+        deliverySearch.setEndDate(LocalDateTime.now().plusDays(1));
+
+        // 배송리스트
+        List<Delivery> deliveries = deliverService.findDeliveries(start, end);
+        model.addAttribute("deliveries", deliveries);
+
+        return "deliveries/deliveryList";
     }
 }

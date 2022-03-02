@@ -88,7 +88,7 @@
                     <td th:text="${delivery.orderCompanyName}"></td>
                     <td th:text="${delivery.orderCompanyTel}"></td>
 
-                    <td th:text="${delivery.deliveryCompanyName}"></td>
+                    <td th:text="${delivery.deliveryCompany.getName()}"></td>
                     <td th:text="${delivery.price}"></td>
 <!--                    <td th:text="${delivery.deliveryCompany.getDeliveryFees().get}"></td> 주소, 배송업체에 따라 배송비 변경-->
                     <td th:text="${delivery.dispatchNo}"></td>
