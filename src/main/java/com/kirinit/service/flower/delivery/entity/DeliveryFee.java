@@ -1,5 +1,6 @@
 package com.kirinit.service.flower.delivery.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kirinit.service.flower.delivery.entity.audit.BaseEntity;
 import lombok.*;
 
@@ -17,6 +18,7 @@ public class DeliveryFee extends BaseEntity {
     @Column(name = "delivery_fee_id")
     private Long id;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "delivery_company_id")
     private DeliveryCompany deliveryCompany;

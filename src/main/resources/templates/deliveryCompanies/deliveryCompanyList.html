@@ -34,10 +34,10 @@
         </table>
         <script th:inline="javascript">
             function updateBoard(obj)  {
-                let name = $(obj).parent("td").parent("tr").find("input[name=name]").html();
+                let name = $(obj).parent("td").parent("tr").find(".name").html();
                 $(obj).parent("td").parent("tr").parent("tbody").find(".tbl-cont.on").find(".process").html("");
                 $(obj).parent("td").parent("tr").addClass("on");
-                $(obj).parent("td").parent("tr").find(".name").html("<input type='text' id='name' name='name' class='form-control' value='"+ name + "'>")
+                $(obj).parent("td").parent("tr").find(".name").html("<input type='text' id='name' name='name' class='form-control' value='"+ name + "' style='width:90%;margin:0 auto;'>")
                 $(obj).parent("td").html("<input type='button' class='btn btn-secondary update' value='확인'>")
 
                 $(".update").click(function () {
@@ -46,8 +46,9 @@
                         let jsonArray = [];
                         for (const htmlElement of html) {
                             let obj = {};
-                            obj.id = $(htmlElement).parent("td").parent("tr").find(".id").attr("id");
+                            obj.id = $(htmlElement).find(".id").attr("id");
                             obj.name = $(htmlElement).find("input[name=name]").val();
+
                             if (obj.name === "") {
                                 alert("업체명을 입력해주세요 !");
                                 return false;
@@ -55,6 +56,7 @@
                             jsonArray.push(obj);
                         }
                         let msg = JSON.stringify(jsonArray);
+
                         let callback = function (data) {
                             if (data.resultCode == "0000") {
                                 alert(data.resultMessage);
@@ -70,8 +72,29 @@
                 });
             }
             function deleteBoard(obj) {
-                // $(obj).parent("td").parent("tr").remove();
-                console.log("Delete data");
+                let id = $(obj).parent("td").parent("tr").find(".id").attr("id");
+                let name = $(obj).parent("td").parent("tr").find(".name").html();
+                console.log(id, name);
+                if (confirm("해당 데이터를 삭제하시겠습니까 ?")) {
+
+                    let obj = {};
+
+                    obj.id = id;
+                    obj.name = name;
+                    let msg = JSON.stringify(obj);
+
+                    let callback = function (data) {
+                        if (data.resultCode == "0000") {
+                            alert(data.resultMessage);
+                            location.href = "/deliveryCompanies";
+                        } else {
+                            alert(data.resultMessage);
+                        }
+                    }
+                    doPost("/deliveryCompanies/delete", msg, callback);
+                } else {
+                    return false;
+                }
             }
         </script>
     </div>

@@ -90,6 +90,9 @@ public class DeliveryFeeController {
         model.addAttribute("member", principal.getMember());
 
         // 배송업체 리스트
+        model.addAttribute("deliveryCompanies", deliveryCompanyService.findDeliveryCompanies());
+
+        // 배송비 리스트
         model.addAttribute("deliveryFees", deliveryFeeService.findDeliveryFees());
 
         return "deliveryFees/deliveryFeeList";

@@ -46,4 +46,12 @@ public class DeliveryCompanyService {
         Optional<DeliveryCompany> findDeliveryCompany = deliveryCompanyRepository.findById(deliveryCompanyId);
         findDeliveryCompany.get().change(name);
     }
+
+    /**
+     * 배송업체 삭제
+     */
+    @Transactional
+    public void deleteDeliveryCompany(Long deliveryCompanyId) {
+        deliveryCompanyRepository.deleteById(deliveryCompanyId);
+    }
 }

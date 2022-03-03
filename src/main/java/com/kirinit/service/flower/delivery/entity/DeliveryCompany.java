@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "delivery_company")
@@ -22,6 +23,9 @@ public class DeliveryCompany extends BaseEntity {
 
     @OneToOne(mappedBy = "deliveryCompany", fetch = FetchType.LAZY)
     private Delivery delivery;
+
+    @OneToMany(mappedBy = "deliveryCompany", cascade = CascadeType.ALL)
+    private List<DeliveryFee> deliveryFees;
 
     @Column(name = "name")
     private String name;

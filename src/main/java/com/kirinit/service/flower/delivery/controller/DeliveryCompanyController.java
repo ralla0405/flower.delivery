@@ -81,4 +81,59 @@ public class DeliveryCompanyController {
 
         return "deliveryCompanies/deliveryCompanyList";
     }
+
+    @PostMapping("/deliveryCompanies/edit")
+    @ResponseBody
+    public ResponseEntity<ResponseDto> updateDeliveryCompanies(@RequestBody List<DeliveryCompanyDto> deliveryCompanyDtoList,
+                                                               BindingResult result) {
+        if (result.hasErrors()) {
+            ResponseDto responseDto = ResponseDto.builder()
+                    .resultCode("9999")
+                    .resultMessage("서버 오류입니다.")
+                    .build();
+
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }
+
+        // 배송업체 List 수정
+        List<DeliveryCompany> insertList = new ArrayList<>();
+        for (DeliveryCompanyDto deliveryCompanyDto : deliveryCompanyDtoList) {
+            deliveryCompanyService.updateDeliveryCompany(deliveryCompanyDto.getId(), deliveryCompanyDto.getName());
+        }
+
+        deliveryCompanyService.DeliveryCompany(insertList);
+
+        ResponseDto responseDto = ResponseDto.builder()
+                .resultCode("0000")
+                .resultMessage("정상 처리 되었습니다.")
+                .build();
+
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
+
+    @PostMapping("/deliveryCompanies/delete")
+    @ResponseBody
+    public ResponseEntity<ResponseDto> deleteDeliveryCompany(@RequestBody DeliveryCompanyDto deliveryCompanyDto,
+                                                               BindingResult result) {
+        if (result.hasErrors()) {
+            ResponseDto responseDto = ResponseDto.builder()
+                    .resultCode("9999")
+                    .resultMessage("서버 오류입니다.")
+                    .build();
+
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }
+
+        System.out.println("deliveryCompanyDto = " + deliveryCompanyDto);
+
+        // 배송업체 삭제
+        deliveryCompanyService.deleteDeliveryCompany(deliveryCompanyDto.getId());
+
+        ResponseDto responseDto = ResponseDto.builder()
+                .resultCode("0000")
+                .resultMessage("정상 처리 되었습니다.")
+                .build();
+
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
 }

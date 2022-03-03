@@ -25,11 +25,16 @@
             </thead>
             <tbody>
             <tr th:each="deliveryFee, index : ${deliveryFees}">
-                <td th:text="${index.index + 1}"></td>
-                <td th:text="${deliveryFee.deliveryCompany.name}"></td>
-                <td th:text="${deliveryFee.areaName}"></td>
-                <td th:text="${deliveryFee.price}"></td>
+                <td class="id" th:id="${deliveryFee.getId()}" th:text="${index.index + 1}"></td>
+                <td class="name" th:text="${deliveryFee.deliveryCompany.name}"></td>
+                <td class="areaName" th:text="${deliveryFee.areaName}"></td>
+                <td class="price" th:text="${deliveryFee.price}"></td>
                 <td>
+                    <select class="deliveryCompanies" hidden>
+                        <option th:each="deliveryCompany : ${deliveryCompanies}"
+                                th:value="${deliveryCompany.getId()}"
+                                th:text="${deliveryCompany.getName()}"></option>
+                    </select>
                     <input type="button" class="btn btn-primary" value="수정" onclick="updateBoard(this)">
                     <input type="button" class="btn btn-danger" value="삭제" onclick="deleteBoard(this)">
                 </td>
@@ -38,7 +43,31 @@
         </table>
         <script th:inline="javascript">
             function updateBoard(obj)  {
-                console.log("Update data");
+                let id = $(obj).parent("td").parent("tr").find(".id").attr("id");
+                let name = $(obj).parent("td").parent("tr").find(".name").html();
+                let areaName = $(obj).parent("td").parent("tr").find(".areaName").html();
+                let price = $(obj).parent("td").parent("tr").find(".price").html();
+                let deliveryCompanies = $(obj).parent("td").find(".deliveryCompanies").find("option");
+                let select = $("select");
+                select.prop("id", "deliveryCompanyDto");
+                select.prop("name", "deliveryCompanyDto");
+                for (const deliveryCompany of deliveryCompanies) {
+                    let id = $(deliveryCompany).html();
+                    if (id === name) {
+                        $(deliveryCompany).prop("selected", true);
+                    }
+                    select.append($(deliveryCompany));
+                    console.log(deliveryCompany);
+
+                }
+
+                $(obj).parent("td").parent("tr").parent("tbody").find(".tbl-cont.on").find(".process").html("");
+                $(obj).parent("td").parent("tr").addClass("on");
+                $(obj).parent("td").parent("tr").find(".name").html(select);
+                $(obj).parent("td").parent("tr").find(".areaName").html("<input type='text' id='areaName' name='areaName' class='form-control' value='" + areaName + "' style='width:90%;margin:0 auto;'>");
+                $(obj).parent("td").parent("tr").find(".price").html("<input type='text' id='price' name='price' class='form-control' value='" + price + "' style='width:90%;margin:0 auto;'>");
+                $(obj).parent("td").html("<input type='button' class='btn btn-secondary update' value='확인'>")
+
             }
             function deleteBoard(obj) {
                 // $(obj).parent("td").parent("tr").remove();
