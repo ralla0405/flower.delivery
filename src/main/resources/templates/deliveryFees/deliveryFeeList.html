@@ -24,16 +24,17 @@
             </tr>
             </thead>
             <tbody>
-            <tr th:each="deliveryFee, index : ${deliveryFees}">
+            <tr class="tbl-cont" th:each="deliveryFee, index : ${deliveryFees}">
                 <td class="id" th:id="${deliveryFee.getId()}" th:text="${index.index + 1}"></td>
                 <td class="name" th:text="${deliveryFee.deliveryCompany.name}"></td>
                 <td class="areaName" th:text="${deliveryFee.areaName}"></td>
                 <td class="price" th:text="${deliveryFee.price}"></td>
-                <td>
-                    <select class="deliveryCompanies" hidden>
+                <td class="process">
+                    <select id="deliveryCompanies" name="deliveryCompanies" class="form-select" hidden>
                         <option th:each="deliveryCompany : ${deliveryCompanies}"
                                 th:value="${deliveryCompany.getId()}"
-                                th:text="${deliveryCompany.getName()}"></option>
+                                th:text="${deliveryCompany.getName()}"
+                                th:selected="${deliveryFee.deliveryCompany.name} == ${deliveryCompany.name}"></option>
                     </select>
                     <input type="button" class="btn btn-primary" value="수정" onclick="updateBoard(this)">
                     <input type="button" class="btn btn-danger" value="삭제" onclick="deleteBoard(this)">
@@ -43,35 +44,71 @@
         </table>
         <script th:inline="javascript">
             function updateBoard(obj)  {
-                let id = $(obj).parent("td").parent("tr").find(".id").attr("id");
-                let name = $(obj).parent("td").parent("tr").find(".name").html();
                 let areaName = $(obj).parent("td").parent("tr").find(".areaName").html();
                 let price = $(obj).parent("td").parent("tr").find(".price").html();
-                let deliveryCompanies = $(obj).parent("td").find(".deliveryCompanies").find("option");
-                let select = $("select");
-                select.prop("id", "deliveryCompanyDto");
-                select.prop("name", "deliveryCompanyDto");
-                for (const deliveryCompany of deliveryCompanies) {
-                    let id = $(deliveryCompany).html();
-                    if (id === name) {
-                        $(deliveryCompany).prop("selected", true);
-                    }
-                    select.append($(deliveryCompany));
-                    console.log(deliveryCompany);
-
-                }
+                let deliveryCompanies = $(obj).parent("td").find("#deliveryCompanies");
+                deliveryCompanies.prop("hidden", false);
 
                 $(obj).parent("td").parent("tr").parent("tbody").find(".tbl-cont.on").find(".process").html("");
                 $(obj).parent("td").parent("tr").addClass("on");
-                $(obj).parent("td").parent("tr").find(".name").html(select);
+                $(obj).parent("td").parent("tr").find(".name").html(deliveryCompanies);
                 $(obj).parent("td").parent("tr").find(".areaName").html("<input type='text' id='areaName' name='areaName' class='form-control' value='" + areaName + "' style='width:90%;margin:0 auto;'>");
                 $(obj).parent("td").parent("tr").find(".price").html("<input type='text' id='price' name='price' class='form-control' value='" + price + "' style='width:90%;margin:0 auto;'>");
                 $(obj).parent("td").html("<input type='button' class='btn btn-secondary update' value='확인'>")
+                $(".update").click(function () {
+                    if (confirm("해당 데이터를 수정하시겠습니까 ?")) {
+                        let html = $(".tbl-cont.on");
+                        let jsonArray = [];
+                        for (const htmlElement of html) {
+                            let obj = {};
+                            obj.id = $(htmlElement).find(".id").attr("id");
+                            obj.deliveryCompanyDto = {
+                                id: $(htmlElement).find("select[name=deliveryCompanies]").val()
+                            }
+                            obj.areaName = $(htmlElement).find("input[name=areaName]").val();
+                            obj.price = $(htmlElement).find("input[name=price]").val();
 
+                            if (obj.areaName === "" || obj.price === "") {
+                                alert("입력란을 모두 작성해주세요.");
+                                return false;
+                            }
+                            jsonArray.push(obj);
+                        }
+                        let msg = JSON.stringify(jsonArray);
+                        console.log(msg);
+                        let callback = function (data) {
+                            if (data.resultCode == "0000") {
+                                alert(data.resultMessage);
+                                location.href = "/deliveryFees";
+                            } else {
+                                alert(data.resultMessage);
+                            }
+                        }
+                        doPost("/deliveryFees/edit", msg, callback);
+                    } else {
+                        return false;
+                    }
+                });
             }
             function deleteBoard(obj) {
-                // $(obj).parent("td").parent("tr").remove();
-                console.log("Delete data");
+                let id = $(obj).parent("td").parent("tr").find(".id").prop("id");
+                if (confirm("해당 데이터를 삭제하시겠습니까 ?")) {
+                    let obj = {};
+                    obj.id = id;
+                    let msg = JSON.stringify(obj);
+
+                    let callback = function (data) {
+                        if (data.resultCode == "0000") {
+                            alert(data.resultMessage);
+                            location.href = "/deliveryFees";
+                        } else {
+                            alert(data.resultMessage);
+                        }
+                    }
+                    doPost("/deliveryFees/delete", msg, callback);
+                } else {
+                    return false;
+                }
             }
         </script>
     </div>

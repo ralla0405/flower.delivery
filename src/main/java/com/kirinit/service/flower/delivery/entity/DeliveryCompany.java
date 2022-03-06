@@ -27,7 +27,7 @@ public class DeliveryCompany extends BaseEntity {
     @OneToMany(mappedBy = "deliveryCompany", cascade = CascadeType.ALL)
     private List<DeliveryFee> deliveryFees;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
 
     //===비즈니스 로직===//

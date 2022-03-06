@@ -64,7 +64,6 @@
                     };
                     obj.areaName = $(htmlElement).find("input[name=areaName]").val();
                     obj.price = Number($(htmlElement).find("input[name=price]").val());
-                    console.log(obj);
                     if (obj.areaName === "" || obj.price === "") {
                         alert("입력란을 모두 작성해주세요.");
                         return false;

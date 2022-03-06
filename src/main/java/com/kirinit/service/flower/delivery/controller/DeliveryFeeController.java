@@ -97,4 +97,34 @@ public class DeliveryFeeController {
 
         return "deliveryFees/deliveryFeeList";
     }
+
+    @PostMapping("/deliveryFees/edit")
+    @ResponseBody
+    public ResponseEntity<ResponseDto> update(@RequestBody List<DeliveryFeeDto> deliveryFeeList,
+                                              BindingResult result) {
+
+        if (result.hasErrors()) {
+            ResponseDto responseDto = ResponseDto.builder()
+                    .resultCode("9999")
+                    .resultMessage("서버 오류입니다.")
+                    .build();
+
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }
+
+        // 배송비 List 수정
+        for (DeliveryFeeDto deliveryFeeDto : deliveryFeeList) {
+            deliveryFeeService.updateDeliveryFee(deliveryFeeDto.getId(),
+                    deliveryFeeDto.getDeliveryCompanyDto().getId(),
+                    deliveryFeeDto.getAreaName(),
+                    deliveryFeeDto.getPrice());
+        }
+
+        ResponseDto responseDto = ResponseDto.builder()
+                .resultCode("0000")
+                .resultMessage("정상 처리 되었습니다.")
+                .build();
+
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
 }

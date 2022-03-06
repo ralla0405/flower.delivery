@@ -7,6 +7,8 @@ import javax.validation.constraints.NotNull;
 @Data
 public class DeliveryFeeDto {
 
+    private Long id;
+
     private DeliveryCompanyDto deliveryCompanyDto;
 
     @NotNull

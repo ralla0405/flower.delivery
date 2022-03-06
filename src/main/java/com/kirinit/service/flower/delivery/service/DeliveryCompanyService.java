@@ -1,5 +1,6 @@
 package com.kirinit.service.flower.delivery.service;
 
+import com.kirinit.service.flower.delivery.dto.DeliveryCompanyDto;
 import com.kirinit.service.flower.delivery.entity.DeliveryCompany;
 import com.kirinit.service.flower.delivery.repository.DeliveryCompanyRepository;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -28,6 +30,22 @@ public class DeliveryCompanyService {
      */
     public Optional<DeliveryCompany> findOne(Long deliveryCompanyId) {
         return deliveryCompanyRepository.findById(deliveryCompanyId);
+    }
+
+    /**
+     * 배송업체 중복 검토
+     */
+    public boolean validateDuplicateDeliveryCompany(DeliveryCompanyDto deliveryCompanyDto) {
+
+        boolean isExisted = deliveryCompanyRepository.existsByName(deliveryCompanyDto.getName());
+        if (isExisted) {
+            if (deliveryCompanyDto.getId() != null) {
+                return !deliveryCompanyRepository.findById(deliveryCompanyDto.getId()).get().getName().equals(deliveryCompanyDto.getName());
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**

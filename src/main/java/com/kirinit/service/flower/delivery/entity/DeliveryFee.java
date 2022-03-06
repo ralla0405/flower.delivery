@@ -23,9 +23,19 @@ public class DeliveryFee extends BaseEntity {
     @JoinColumn(name = "delivery_company_id")
     private DeliveryCompany deliveryCompany;
 
-    @Column(name = "area_name")
+    @Column(name = "area_name", unique = true)
     private String areaName;
 
     @Column(name = "price")
     private int price;
+
+    //===비즈니스 로직===//
+    /**
+     * 데이터 변경
+     */
+    public void change(DeliveryCompany deliveryCompany, String areaName, int price) {
+        this.deliveryCompany = deliveryCompany;
+        this.areaName = areaName;
+        this.price = price;
+    }
 }
