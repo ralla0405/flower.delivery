@@ -1,5 +1,6 @@
 package com.kirinit.service.flower.delivery.service;
 
+import com.kirinit.service.flower.delivery.dto.DeliveryFeeDto;
 import com.kirinit.service.flower.delivery.entity.DeliveryCompany;
 import com.kirinit.service.flower.delivery.entity.DeliveryFee;
 import com.kirinit.service.flower.delivery.repository.DeliveryCompanyRepository;
@@ -27,6 +28,23 @@ public class DeliveryFeeService {
     }
 
     /**
+     * 지역명 중복 검토
+     * 중복이면 true 반환
+     */
+    public boolean validateDuplicateAreaName(DeliveryFeeDto deliveryFeeDto) {
+        // 구역명 중복 확인
+        boolean isExisted = deliveryFeeRepository.existsByAreaName(deliveryFeeDto.getAreaName());
+        if (isExisted) {
+            if (deliveryFeeDto.getId() != null) {
+                DeliveryFee findDeliveryFee = deliveryFeeRepository.findById(deliveryFeeDto.getId()).get();
+                return !(findDeliveryFee.getAreaName().equals(deliveryFeeDto.getAreaName()) && findDeliveryFee.getDeliveryCompany().getName().equals(deliveryFeeDto.getDeliveryCompanyDto().getName()));
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+    /**
      * 배송비 등록
      */
     @Transactional
@@ -43,5 +61,13 @@ public class DeliveryFeeService {
         Optional<DeliveryCompany> findDeliveryCompany = deliveryCompanyRepository.findById(deliveryCompanyId);
 
         findDeliveryFee.get().change(findDeliveryCompany.get(), areaName, price);
+    }
+
+    /**
+     * 배송비 삭제
+     */
+    @Transactional
+    public void deleteDeliveryFee(Long deliveryFeeId) {
+        deliveryFeeRepository.deleteById(deliveryFeeId);
     }
 }

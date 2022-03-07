@@ -9,6 +9,11 @@ main > .container {
     margin: 0 auto;
     padding: 60px 15px 0;
 }
+.sub-wrap {
+    width: 900px;
+    margin: 0 auto;
+    padding: 60px 15px 0;
+}
 table th{
     font-size: 14px;
 }

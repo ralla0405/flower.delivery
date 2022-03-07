@@ -4,7 +4,7 @@
 <body class="d-flex flex-column h-100">
 <header th:replace="fragments/loginHeader :: loginHeader(${member.getName()}, ${member.getRole().name()})"></header>
 <main class="flex-shrink-0">
-    <div class="main-wrap h-100 mt-3">
+    <div class="sub-wrap h-100 mt-3">
         <div>
             <h2>배송비 등록하기</h2>
             <div class="row justify-content-start mb-2">
@@ -49,7 +49,7 @@
             </tbody>
         </table>
         <div class="row justify-content-center">
-            <div class="col-1 btn-group">
+            <div class="col-2 btn-group">
                 <button type="submit" class="btn btn-outline-primary register">등록하기</button>
             </div>
         </div>
@@ -60,7 +60,8 @@
                 for (const htmlElement of html) {
                     let obj = {};
                     obj.deliveryCompanyDto = {
-                        id: $(htmlElement).find("select[name=deliveryCompanyDto]").val()
+                        id: $(htmlElement).find("#deliveryCompanyDto option:selected").val(),
+                        name: $(htmlElement).find("#deliveryCompanyDto option:selected").html()
                     };
                     obj.areaName = $(htmlElement).find("input[name=areaName]").val();
                     obj.price = Number($(htmlElement).find("input[name=price]").val());

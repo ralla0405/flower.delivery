@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Controller
 @RequiredArgsConstructor
@@ -107,22 +106,22 @@ public class DeliveryCompanyController {
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }
 
-        // 배송업체 List 수정
-        List<DeliveryCompany> insertList = new ArrayList<>();
+        // name 중복검사
         for (DeliveryCompanyDto deliveryCompanyDto : deliveryCompanyDtoList) {
-            // name 중복검사
             if (deliveryCompanyService.validateDuplicateDeliveryCompany(deliveryCompanyDto)) {
                 ResponseDto responseDto = ResponseDto.builder()
                         .resultCode("8888")
-                        .resultMessage("업체명은 중복 불가입니다.")
+                        .resultMessage(deliveryCompanyDto.getName() + " 업체명은 중복 불가입니다.")
                         .build();
 
                 return new ResponseEntity<>(responseDto, HttpStatus.OK);
             }
-            deliveryCompanyService.updateDeliveryCompany(deliveryCompanyDto.getId(), deliveryCompanyDto.getName());
         }
 
-        deliveryCompanyService.DeliveryCompany(insertList);
+        // 배송업체 List 수정
+        for (DeliveryCompanyDto deliveryCompanyDto : deliveryCompanyDtoList) {
+            deliveryCompanyService.updateDeliveryCompany(deliveryCompanyDto.getId(), deliveryCompanyDto.getName());
+        }
 
         ResponseDto responseDto = ResponseDto.builder()
                 .resultCode("0000")
@@ -144,8 +143,6 @@ public class DeliveryCompanyController {
 
             return new ResponseEntity<>(responseDto, HttpStatus.OK);
         }
-
-        System.out.println("deliveryCompanyDto = " + deliveryCompanyDto);
 
         // 배송업체 삭제
         deliveryCompanyService.deleteDeliveryCompany(deliveryCompanyDto.getId());

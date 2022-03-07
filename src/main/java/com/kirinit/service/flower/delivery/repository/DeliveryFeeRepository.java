@@ -4,4 +4,5 @@ import com.kirinit.service.flower.delivery.entity.DeliveryFee;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DeliveryFeeRepository extends JpaRepository<DeliveryFee, Long> {
+    boolean existsByAreaName(String areaName);
 }

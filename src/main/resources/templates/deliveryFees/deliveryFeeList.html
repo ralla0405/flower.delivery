@@ -4,7 +4,7 @@
 <body class="d-flex flex-column h-100">
 <header th:replace="fragments/loginHeader :: loginHeader(${member.getName()}, ${member.getRole().name()})"></header>
 <main class="flex-shrink-0">
-    <div class="main-wrap h-100 mt-3">
+    <div class="sub-wrap h-100 mt-3">
         <div>
             <h2>배송비 리스트</h2>
             <div class="row justify-content-end mb-2">
@@ -63,7 +63,8 @@
                             let obj = {};
                             obj.id = $(htmlElement).find(".id").attr("id");
                             obj.deliveryCompanyDto = {
-                                id: $(htmlElement).find("select[name=deliveryCompanies]").val()
+                                id: $(htmlElement).find("#deliveryCompanies option:selected").val(),
+                                name: $(htmlElement).find("#deliveryCompanies option:selected").html()
                             }
                             obj.areaName = $(htmlElement).find("input[name=areaName]").val();
                             obj.price = $(htmlElement).find("input[name=price]").val();

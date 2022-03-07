@@ -25,4 +25,12 @@ public class OrderCompany {
     @Column(name = "tel")
     private String tel;
 
+    //===비즈니스 로직===//
+    /**
+     * 데이터 변경
+     */
+    public void change(String name, String tel) {
+        this.name = name;
+        this.tel = tel;
+    }
 }
