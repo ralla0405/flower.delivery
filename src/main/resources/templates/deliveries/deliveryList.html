@@ -76,28 +76,128 @@
             </thead>
             <tbody>
                 <tr th:each="delivery : ${deliveries}">
-                    <td th:text="${delivery.no}"></td>
-                    <td th:text="${delivery.date}"></td>
-                    <td th:text="${delivery.time}"></td>
-                    <td th:text="${delivery.address}"></td>
-                    <td th:text="${delivery.toName}"></td>
-
-                    <td th:text="${delivery.toTel}"></td>
-                    <td th:text="${delivery.itemName}"></td>
-                    <td th:text="${delivery.memo}"></td>
-                    <td th:text="${delivery.orderCompanyName}"></td>
-                    <td th:text="${delivery.orderCompanyTel}"></td>
-
-                    <td th:text="${delivery.deliveryCompany.getName()}"></td>
-                    <td th:text="${delivery.price}"></td>
-<!--                    <td th:text="${delivery.deliveryCompany.getDeliveryFees().get}"></td> 주소, 배송업체에 따라 배송비 변경-->
-                    <td th:text="${delivery.dispatchNo}"></td>
-                    <td>처리</td>
-                    <td th:if="${member.getRole().name() == 'ROLE_ADMIN'}" th:text="memberId"></td>
-                    <td>인수증</td>
+                    <td th:id="${delivery.id}" class="no" th:text="${delivery.no}"></td>
+                    <td class="date" th:text="${delivery.date}"></td>
+                    <td class="time" th:text="${delivery.time}"></td>
+                    <td class="address" th:text="${delivery.address}"></td>
+                    <td class="toName" th:text="${delivery.toName}"></td>
+                    <td class="toTel" th:text="${delivery.toTel}"></td>
+                    <td class="itemName" th:text="${delivery.itemName}"></td>
+                    <td class="memo" th:text="${delivery.memo}"></td>
+                    <td class="orderCompanyName" th:text="${delivery.orderCompanyName}"></td>
+                    <td class="orderCompanyTel" th:text="${delivery.orderCompanyTel}"></td>
+                    <td class="deliveryCompany" th:text="${delivery.deliveryCompany.name}"></td>
+                    <td class="price" th:text="${delivery.price}"></td>
+                    <td class="dispatchNo" th:text="${delivery.dispatchNo}"></td>
+                    <td class="process">
+                        <select id="deliveryCompanies" name="deliveryCompanies" class="form-select" onchange="getFee(this)" hidden>
+                            <option th:each="deliveryCompany : ${deliveryCompanies}"
+                                    th:value="${deliveryCompany.getId()}"
+                                    th:text="${deliveryCompany.getName()}"
+                                    th:selected="${delivery.deliveryCompany.name} == ${deliveryCompany.name}"></option>
+                        <input type="button" class="btn btn-primary" value="수정" onclick="updateBoard(this)">
+                        <input type="button" class="btn btn-danger" value="삭제" onclick="deleteBoard(this)">
+                    </td>
+                    <td th:if="${member.getRole().name() == 'ROLE_ADMIN'}" th:text="${member.getName()}"></td>
+                    <td><input type="button" class="btn btn-info receipt" value="인수증"></td>
                 </tr>
             </tbody>
         </table>
+        <script th:inline="javascript">
+            function updateBoard(obj)  {
+                let date = $(obj).parent("td").parent("tr").find(".date").html();
+                let time = $(obj).parent("td").parent("tr").find(".time").html();
+                let address = $(obj).parent("td").parent("tr").find(".address").html();
+                let toName = $(obj).parent("td").parent("tr").find(".toName").html();
+                let toTel = $(obj).parent("td").parent("tr").find(".toTel").html();
+                let itemName = $(obj).parent("td").parent("tr").find(".itemName").html();
+                let memo = $(obj).parent("td").parent("tr").find(".memo").html();
+                let orderCompanyName = $(obj).parent("td").parent("tr").find(".orderCompanyName").html();
+                let orderCompanyTel = $(obj).parent("td").parent("tr").find(".orderCompanyTel").html();
+                let price = $(obj).parent("td").parent("tr").find(".price").html();
+                let dispatchNo = $(obj).parent("td").parent("tr").find(".dispatchNo").html();
+                let deliveryCompanies = $(obj).parent("td").find("#deliveryCompanies");
+                deliveryCompanies.prop("hidden", false);
+
+                $(obj).parent("td").parent("tr").parent("tbody").find(".tbl-cont.on").find(".process").html("");
+                $(obj).parent("td").parent("tr").addClass("on");
+                $(obj).parent("td").parent("tr").find(".date").html("<input type='date' id='date' name='date' class='form-control' value='" + date + "'>");
+                $(obj).parent("td").parent("tr").find(".time").html("<input type='text' id='time' name='time' class='form-control' value='" + time + "'>");
+                $(obj).parent("td").parent("tr").find(".address").html("<input type='text' id='address' name='address' class='form-control' value='" + address + "' onblur='getFee(this)'>");
+                $(obj).parent("td").parent("tr").find(".toName").html("<input type='text' id='toName' name='toName' class='form-control' value='" + toName + "'>");
+                $(obj).parent("td").parent("tr").find(".toTel").html("<input type='text' id='toTel' name='toTel' class='form-control' value='" + toTel + "'>");
+                $(obj).parent("td").parent("tr").find(".itemName").html("<input type='text' id='itemName' name='itemName' class='form-control' value='" + itemName + "'>");
+                $(obj).parent("td").parent("tr").find(".memo").html("<input type='text' id='memo' name='memo' class='form-control' value='" + memo + "'>");
+                $(obj).parent("td").parent("tr").find(".orderCompanyName").html("<input type='text' id='orderCompanyName' name='orderCompanyName' class='form-control' value='" + orderCompanyName + "' onblur='getTel(this)'>");
+                $(obj).parent("td").parent("tr").find(".orderCompanyTel").html("<input type='text' id='orderCompanyTel' name='orderCompanyTel' class='form-control' value='" + orderCompanyTel + "'>");
+                $(obj).parent("td").parent("tr").find(".price").html("<input type='text' id='price' name='price' class='form-control' value='" + price + "'>");
+                $(obj).parent("td").parent("tr").find(".dispatchNo").html("<input type='text' id='dispatchNo' name='dispatchNo' class='form-control' value='" + dispatchNo + "'>");
+                $(obj).parent("td").parent("tr").find(".deliveryCompany").html(deliveryCompanies);
+                $(obj).parent("td").html("<input type='button' class='btn btn-secondary update' value='확인'>")
+                $(".update").click(function () {
+                    if (confirm("해당 데이터를 수정하시겠습니까 ?")) {
+                        let html = $(".tbl-cont.on");
+                        let jsonArray = [];
+                        for (const htmlElement of html) {
+                            let obj = {};
+                            obj.id = $(htmlElement).find(".no").attr("id");
+                            obj.date = $(htmlElement).find("#date").val();
+                            obj.time = $(htmlElement).find("#time").val();
+                            obj.address = $(htmlElement).find("#address").val();
+                            obj.toName = $(htmlElement).find("#toName").val();
+                            obj.toTel = $(htmlElement).find("#toTel").val();
+                            obj.itemName = $(htmlElement).find("#itemName").val();
+                            obj.memo = $(htmlElement).find("#memo").val();
+                            obj.orderCompanyName = $(htmlElement).find("#orderCompanyName").val();
+                            obj.orderCompanyTel = $(htmlElement).find("#orderCompanyTel").val();
+                            obj.price = $(htmlElement).find("#price").val();
+                            obj.dispatchNo = $(htmlElement).find("#dispatchNo").val();
+                            obj.deliveryCompanyDto = {
+                                id: $(htmlElement).find("#deliveryCompanies option:selected").val(),
+                                name: $(htmlElement).find("#deliveryCompanies option:selected").html()
+                            };
+                            obj.areaName = $(htmlElement).find("input[name=areaName]").val();
+                            obj.price = Number($(htmlElement).find("input[name=price]").val());
+
+                            jsonArray.push(obj);
+                        }
+                        let msg = JSON.stringify(jsonArray);
+                        console.log(msg);
+                        let callback = function (data) {
+                            if (data.resultCode == "0000") {
+                                alert(data.resultMessage);
+                                location.href = "/deliveries";
+                            } else {
+                                alert(data.resultMessage);
+                            }
+                        }
+                        //doPost("/deliveries/edit", msg, callback);
+                    } else {
+                        return false;
+                    }
+                });
+            }
+            function deleteBoard(obj) {
+                let id = $(obj).parent("td").parent("tr").find(".no").prop("id");
+                if (confirm("해당 데이터를 삭제하시겠습니까 ?")) {
+                    let obj = {};
+                    obj.id = id;
+                    let msg = JSON.stringify(obj);
+
+                    let callback = function (data) {
+                        if (data.resultCode == "0000") {
+                            alert(data.resultMessage);
+                            location.href = "/deliveries";
+                        } else {
+                            alert(data.resultMessage);
+                        }
+                    }
+                    doPost("/deliveries/delete", msg, callback);
+                } else {
+                    return false;
+                }
+            }
+        </script>
     </div>
 </main>
 </body>

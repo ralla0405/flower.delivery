@@ -1,16 +1,11 @@
 package com.kirinit.service.flower.delivery.dto;
 
-import com.kirinit.service.flower.delivery.entity.DeliveryCompany;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
 
-import java.util.List;
-
-@Getter @Setter
-@ToString(of = {"date", "time", "address", "toTel", "toName", "itemName", "memo", "orderCompanyName", "orderCompanyTel", "deliveryCompanyName", "price", "dispatchNo"})
+@Data
 public class DeliveryDto {
 
+    private Long id;
     private String date;
     private String time;
     private String address;
@@ -20,7 +15,7 @@ public class DeliveryDto {
     private String memo;
     private String orderCompanyName;
     private String orderCompanyTel;
-    private DeliveryCompany deliveryCompany;
-    private String price;
+    private DeliveryCompanyDto deliveryCompanyDto;
+    private int price;
     private String dispatchNo;
 }

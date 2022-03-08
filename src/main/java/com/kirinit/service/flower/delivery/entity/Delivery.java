@@ -59,12 +59,45 @@ public class Delivery extends BaseEntity {
     private DeliveryCompany deliveryCompany;
 
     @Column(name = "price")
-    private String price;
+    private int price;
 
     @Column(name = "dispatch_no")
     private String dispatchNo;
 
     @Enumerated(EnumType.STRING)
     private DeliveryStatus status;
+
+    //===비즈니스 로직===//
+    /**
+     * 데이터 변경
+     */
+    public void change(int no,
+                       String date,
+                       String time,
+                       String address,
+                       String toTel,
+                       String toName,
+                       String itemName,
+                       String memo,
+                       String orderCompanyName,
+                       String orderCompanyTel,
+                       int price,
+                       String dispatchNo,
+                       DeliveryCompany deliveryCompany
+                       ) {
+        this.no = no;
+        this.date = date;
+        this.time = time;
+        this.address = address;
+        this.toTel = toTel;
+        this.toName = toName;
+        this.itemName = itemName;
+        this.memo = memo;
+        this.orderCompanyName = orderCompanyName;
+        this.orderCompanyTel = orderCompanyTel;
+        this.price = price;
+        this.dispatchNo = dispatchNo;
+        this.deliveryCompany = deliveryCompany;
+    }
 
 }

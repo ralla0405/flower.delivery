@@ -52,8 +52,8 @@
                 $(obj).parent("td").parent("tr").parent("tbody").find(".tbl-cont.on").find(".process").html("");
                 $(obj).parent("td").parent("tr").addClass("on");
                 $(obj).parent("td").parent("tr").find(".name").html(deliveryCompanies);
-                $(obj).parent("td").parent("tr").find(".areaName").html("<input type='text' id='areaName' name='areaName' class='form-control' value='" + areaName + "' style='width:90%;margin:0 auto;'>");
-                $(obj).parent("td").parent("tr").find(".price").html("<input type='text' id='price' name='price' class='form-control' value='" + price + "' style='width:90%;margin:0 auto;'>");
+                $(obj).parent("td").parent("tr").find(".areaName").html("<input type='text' id='areaName' name='areaName' class='form-control' value='" + areaName + "'>");
+                $(obj).parent("td").parent("tr").find(".price").html("<input type='text' id='price' name='price' class='form-control' value='" + price + "'>");
                 $(obj).parent("td").html("<input type='button' class='btn btn-secondary update' value='확인'>")
                 $(".update").click(function () {
                     if (confirm("해당 데이터를 수정하시겠습니까 ?")) {
@@ -76,7 +76,6 @@
                             jsonArray.push(obj);
                         }
                         let msg = JSON.stringify(jsonArray);
-                        console.log(msg);
                         let callback = function (data) {
                             if (data.resultCode == "0000") {
                                 alert(data.resultMessage);

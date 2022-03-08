@@ -1,6 +1,6 @@
 package com.kirinit.service.flower.delivery.entity;
 
-import com.kirinit.service.flower.delivery.service.DeliverService;
+import com.kirinit.service.flower.delivery.service.DeliveryService;
 import com.kirinit.service.flower.delivery.service.MemberService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ import java.util.*;
 public class EntityTest {
     @Autowired EntityManager em;
     @Autowired private MemberService memberService;
-    @Autowired private DeliverService deliverService;
+    @Autowired private DeliveryService deliveryService;
 
     @Test
     public void member() throws Exception {
@@ -80,7 +80,7 @@ public class EntityTest {
                 .address("경기도 광주시 신현리 968-2 302호")
                 .status(DeliveryStatus.READY)
                 .build();
-        deliverService.Delivery(delivery);
+        deliveryService.Delivery(delivery);
 
         //then
         // 한번에 조회 하는 방법 찾아야함

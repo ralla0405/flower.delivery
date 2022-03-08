@@ -23,7 +23,7 @@ public class DeliveryFee extends BaseEntity {
     @JoinColumn(name = "delivery_company_id")
     private DeliveryCompany deliveryCompany;
 
-    @Column(name = "area_name", unique = true)
+    @Column(name = "area_name")
     private String areaName;
 
     @Column(name = "price")

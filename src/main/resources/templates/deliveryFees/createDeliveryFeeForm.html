@@ -32,10 +32,10 @@
                     </select>
                 </td>
                 <td>
-                    <input type="text" th:field="*{areaName}" class="form-control" style="width:90%;margin:0 auto;">
+                    <input type="text" th:field="*{areaName}" class="form-control">
                 </td>
                 <td>
-                    <input type="text" th:field="*{price}" class="form-control" style="width:90%;margin:0 auto;">
+                    <input type="text" th:field="*{price}" class="form-control">
                 </td>
                 <td>
                     <input type="button" class="btn btn-success" value="추가" onclick="plusBoard(this)">
@@ -88,8 +88,8 @@
                 html += "<td><select class='form-select' id='deliveryCompanyDto' name='deliveryCompanyDto'>";
                 html += select;
                 html += "</select></td>";
-                html += "<td><input type='text' id='areaName' name='areaName' class='form-control' style='width:90%;margin:0 auto;'></td>";
-                html += "<td><input type='text' id='price' name='price' class='form-control' style='width:90%;margin:0 auto;'></td>";
+                html += "<td><input type='text' id='areaName' name='areaName' class='form-control'></td>";
+                html += "<td><input type='text' id='price' name='price' class='form-control'></td>";
                 html += "<td><input type='button' class='btn btn-success' value='추가' onclick='plusBoard(this)'></td>";
                 html += "</tr>";
                 $(obj).parent("td").html("<input type='button' class='btn btn-danger' value='삭제' onclick='deleteBoard(this)'>");

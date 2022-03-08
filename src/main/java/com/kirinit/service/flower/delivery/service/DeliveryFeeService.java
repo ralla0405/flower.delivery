@@ -28,13 +28,22 @@ public class DeliveryFeeService {
     }
 
     /**
+     * 배송비 전체 조회 (배송업체 조건)
+     */
+    public List<DeliveryFee> findDeliveryFeesByDeliveryCompany(DeliveryCompany deliveryCompany) {
+        return deliveryFeeRepository.findDeliveryFeesByDeliveryCompany(deliveryCompany);
+    }
+
+    /**
      * 지역명 중복 검토
      * 중복이면 true 반환
      */
     public boolean validateDuplicateAreaName(DeliveryFeeDto deliveryFeeDto) {
         // 구역명 중복 확인
-        boolean isExisted = deliveryFeeRepository.existsByAreaName(deliveryFeeDto.getAreaName());
+        Optional<DeliveryCompany> findDeliveryCompany = deliveryCompanyRepository.findById(deliveryFeeDto.getDeliveryCompanyDto().getId());
+        boolean isExisted = deliveryFeeRepository.existsByDeliveryCompanyAndAreaName(findDeliveryCompany.get(), deliveryFeeDto.getAreaName());
         if (isExisted) {
+            // 수정할 경우
             if (deliveryFeeDto.getId() != null) {
                 DeliveryFee findDeliveryFee = deliveryFeeRepository.findById(deliveryFeeDto.getId()).get();
                 return !(findDeliveryFee.getAreaName().equals(deliveryFeeDto.getAreaName()) && findDeliveryFee.getDeliveryCompany().getName().equals(deliveryFeeDto.getDeliveryCompanyDto().getName()));

@@ -91,9 +91,9 @@ public class DeliveryFeeController {
                 return new ResponseEntity<>(responseDto, HttpStatus.OK);
             }
 
-            Optional<DeliveryCompany> one = deliveryCompanyService.findOne(deliveryFeeDto.getDeliveryCompanyDto().getId());
+            Optional<DeliveryCompany> findDeliveryCompany = deliveryCompanyService.findOne(deliveryFeeDto.getDeliveryCompanyDto().getId());
             DeliveryFee deliveryFee = DeliveryFee.builder()
-                    .deliveryCompany(one.get())
+                    .deliveryCompany(findDeliveryCompany.get())
                     .areaName(deliveryFeeDto.getAreaName())
                     .price(deliveryFeeDto.getPrice())
                     .build();

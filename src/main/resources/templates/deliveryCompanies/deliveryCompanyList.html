@@ -37,7 +37,7 @@
                 let name = $(obj).parent("td").parent("tr").find(".name").html();
                 $(obj).parent("td").parent("tr").parent("tbody").find(".tbl-cont.on").find(".process").html("");
                 $(obj).parent("td").parent("tr").addClass("on");
-                $(obj).parent("td").parent("tr").find(".name").html("<input type='text' id='name' name='name' class='form-control' value='"+ name + "' style='width:90%;margin:0 auto;'>")
+                $(obj).parent("td").parent("tr").find(".name").html("<input type='text' id='name' name='name' class='form-control' value='"+ name + "'>")
                 $(obj).parent("td").html("<input type='button' class='btn btn-secondary update' value='확인'>")
 
                 $(".update").click(function () {

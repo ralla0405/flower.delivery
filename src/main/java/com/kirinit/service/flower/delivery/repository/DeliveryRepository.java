@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
 
     List<Delivery> findAllByDateBetween(String start, String end);
+
+
 }

@@ -25,6 +25,13 @@ public class OrderCompanyService {
     }
 
     /**
+     * 발주업체 단일 조회 (업체명으로 조회)
+     */
+    public Optional<OrderCompany> findByName(String name) {
+        return orderCompanyRepository.findByName(name);
+    }
+
+    /**
      * 발주업체 중복 검토
      */
     public boolean validateDuplicateOrderCompany(OrderCompanyDto orderCompanyDto) {

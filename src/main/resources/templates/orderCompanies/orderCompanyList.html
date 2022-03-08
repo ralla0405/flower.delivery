@@ -60,7 +60,6 @@
                             jsonArray.push(obj);
                         }
                         let msg = JSON.stringify(jsonArray);
-                        console.log(msg);
                         let callback = function (data) {
                             if (data.resultCode == "0000") {
                                 alert(data.resultMessage);

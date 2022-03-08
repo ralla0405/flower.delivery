@@ -26,3 +26,7 @@ table th, table td {
 select {
     font-size: 12px !important;
 }
+table td input[type=text], table td select {
+    width: 90%;
+    margin: 0 auto;
+}
