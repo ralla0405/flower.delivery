@@ -45,9 +45,8 @@ public class DeliveryController {
         model.addAttribute("member", principal.getMember());
 
         // 배송업체 정보
-        System.out.println("deliveryCompanyService.findDeliveryCompanies() = " + deliveryCompanyService.findDeliveryCompanies());
         model.addAttribute("deliveryCompanies", deliveryCompanyService.findDeliveryCompanies());
-
+        
         // 배송조회 기간
         String start = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String end = LocalDateTime.now().plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
@@ -225,12 +224,13 @@ public class DeliveryController {
 
         // 배송비 계산하여 반환
         int price = 0;
-        System.out.println("feeDto = " + feeDto.getId());
-        Optional<DeliveryCompany> deliveryCompany = deliveryCompanyService.findOne(Long.valueOf(feeDto.getId()));
-        List<DeliveryFee> deliveryFees = deliveryFeeService.findDeliveryFeesByDeliveryCompany(deliveryCompany.get());
-        for (DeliveryFee deliveryFee : deliveryFees) {
-            if (deliveryFee.getAreaName().contains(feeDto.getAddress())) {
-                price = deliveryFee.getPrice();
+        if (feeDto.getId() != null) {
+            Optional<DeliveryCompany> deliveryCompany = deliveryCompanyService.findOne(Long.valueOf(feeDto.getId()));
+            List<DeliveryFee> deliveryFees = deliveryFeeService.findDeliveryFeesByDeliveryCompany(deliveryCompany.get());
+            for (DeliveryFee deliveryFee : deliveryFees) {
+                if (deliveryFee.getAreaName().contains(feeDto.getAddress())) {
+                    price = deliveryFee.getPrice();
+                }
             }
         }
 

@@ -1,6 +1,6 @@
 <!DOCTYPE HTML>
 <html lang="ko" class="h-100" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/config :: config"></head>
+<head th:replace="fragments/config :: config"/>
 <body class="d-flex flex-column h-100">
 <header th:replace="fragments/loginHeader :: loginHeader(${member.getName()}, ${member.getRole().name()})"></header>
 <main class="flex-shrink-0">
@@ -68,14 +68,12 @@
                     <th width="5%">배송업체</th>
                     <th width="5%">배송비(원)</th>
                     <th width="3%">배차번호</th>
-                    <th width="7%">처리</th>
-                    <th width="5%" th:if="${member.getRole().name() == 'ROLE_ADMIN'}">작성자</th>
-
+                    <th width="12%">처리</th>
                     <th width="4%">인수증</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="delivery : ${deliveries}">
+                <tr class="tbl-cont" th:each="delivery : ${deliveries}">
                     <td th:id="${delivery.id}" class="no" th:text="${delivery.no}"></td>
                     <td class="date" th:text="${delivery.date}"></td>
                     <td class="time" th:text="${delivery.time}"></td>
@@ -90,15 +88,14 @@
                     <td class="price" th:text="${delivery.price}"></td>
                     <td class="dispatchNo" th:text="${delivery.dispatchNo}"></td>
                     <td class="process">
-                        <select id="deliveryCompanies" name="deliveryCompanies" class="form-select" onchange="getFee(this)" hidden>
-                            <option th:each="deliveryCompany : ${deliveryCompanies}"
-                                    th:value="${deliveryCompany.getId()}"
-                                    th:text="${deliveryCompany.getName()}"
-                                    th:selected="${delivery.deliveryCompany.name} == ${deliveryCompany.name}"></option>
+                        <select id="deliveryCompanyDto" name="deliveryCompanyDto" class="form-select" onchange="getFee(this)" hidden>
+                            <option th:each="dc : ${deliveryCompanies}"
+                                    th:value="${dc.getId()}"
+                                    th:text="${dc.getName()}"
+                                    th:selected="${delivery.deliveryCompany.name} == ${dc.name}"></option>
                         <input type="button" class="btn btn-primary" value="수정" onclick="updateBoard(this)">
                         <input type="button" class="btn btn-danger" value="삭제" onclick="deleteBoard(this)">
                     </td>
-                    <td th:if="${member.getRole().name() == 'ROLE_ADMIN'}" th:text="${member.getName()}"></td>
                     <td><input type="button" class="btn btn-info receipt" value="인수증"></td>
                 </tr>
             </tbody>
@@ -116,7 +113,7 @@
                 let orderCompanyTel = $(obj).parent("td").parent("tr").find(".orderCompanyTel").html();
                 let price = $(obj).parent("td").parent("tr").find(".price").html();
                 let dispatchNo = $(obj).parent("td").parent("tr").find(".dispatchNo").html();
-                let deliveryCompanies = $(obj).parent("td").find("#deliveryCompanies");
+                let deliveryCompanies = $(obj).parent("td").find("#deliveryCompanyDto");
                 deliveryCompanies.prop("hidden", false);
 
                 $(obj).parent("td").parent("tr").parent("tbody").find(".tbl-cont.on").find(".process").html("");
@@ -153,8 +150,8 @@
                             obj.price = $(htmlElement).find("#price").val();
                             obj.dispatchNo = $(htmlElement).find("#dispatchNo").val();
                             obj.deliveryCompanyDto = {
-                                id: $(htmlElement).find("#deliveryCompanies option:selected").val(),
-                                name: $(htmlElement).find("#deliveryCompanies option:selected").html()
+                                id: $(htmlElement).find("#deliveryCompanyDto option:selected").val(),
+                                name: $(htmlElement).find("#deliveryCompanyDto option:selected").html()
                             };
                             obj.areaName = $(htmlElement).find("input[name=areaName]").val();
                             obj.price = Number($(htmlElement).find("input[name=price]").val());
@@ -171,7 +168,7 @@
                                 alert(data.resultMessage);
                             }
                         }
-                        //doPost("/deliveries/edit", msg, callback);
+                        doPost("/deliveries/edit", msg, callback);
                     } else {
                         return false;
                     }
@@ -196,6 +193,50 @@
                 } else {
                     return false;
                 }
+            }
+            function getFee(obj) {
+                let address = $(obj).parent("td").parent("tr").find("#address").val();
+                let deliveryCompanyId = $(obj).parent("td").parent("tr").find("#deliveryCompanyDto").val();
+
+                // 주소가 입력되지 않은 경우
+                if (address === "") {
+                    $(obj).parent("td").parent("tr").find("#price").val("0");
+                    return false;
+                }
+                let json = {
+                    address: address,
+                    id: deliveryCompanyId
+                }
+                let msg = JSON.stringify(json);
+                let callback = function (data) {
+                    if (data.resultCode == "0000") {
+                        let price = data.data.price;
+                        $(obj).parent("td").parent("tr").find("#price").val(price);
+                    } else {
+                        alert(data.resultMessage);
+                    }
+                }
+                doPost("/deliveries/getFee", msg, callback);
+            }
+            function getTel(obj) {
+                let name = $(obj).parent("td").parent("tr").find("#orderCompanyName").val();
+                // 발주업체가 입력되지 않은 경우
+                if (name === "") {
+                    return false;
+                }
+                let json = {
+                    name: name
+                }
+                let msg = JSON.stringify(json);
+                let callback = function (data) {
+                    if (data.resultCode == "0000") {
+                        let tel = data.data.tel;
+                        $(obj).parent("td").parent("tr").find("#orderCompanyTel").val(tel);
+                    } else {
+                        alert(data.resultMessage);
+                    }
+                }
+                doPost("/deliveries/getTel", msg, callback);
             }
         </script>
     </div>

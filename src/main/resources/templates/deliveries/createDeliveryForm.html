@@ -158,7 +158,6 @@
                     id: deliveryCompanyId
                 }
                 let msg = JSON.stringify(json);
-                console.log(msg);
                 let callback = function (data) {
                     if (data.resultCode == "0000") {
                         let price = data.data.price;
