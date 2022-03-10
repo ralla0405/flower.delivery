@@ -21,14 +21,11 @@ public class DeliveryCompany extends BaseEntity {
     @Column(name = "delivery_company_id")
     private Long id;
 
-    @OneToOne(mappedBy = "deliveryCompany", fetch = FetchType.LAZY)
-    private Delivery delivery;
+    @Column(name = "name", unique = true)
+    private String name;
 
     @OneToMany(mappedBy = "deliveryCompany", cascade = CascadeType.ALL)
     private List<DeliveryFee> deliveryFees;
-
-    @Column(name = "name", unique = true)
-    private String name;
 
     //===비즈니스 로직===//
     /**

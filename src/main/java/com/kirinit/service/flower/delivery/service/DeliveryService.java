@@ -1,8 +1,7 @@
 package com.kirinit.service.flower.delivery.service;
 
 import com.kirinit.service.flower.delivery.entity.Delivery;
-import com.kirinit.service.flower.delivery.entity.DeliveryCompany;
-import com.kirinit.service.flower.delivery.repository.DeliveryCompanyRepository;
+import com.kirinit.service.flower.delivery.entity.DeliverySearch;
 import com.kirinit.service.flower.delivery.repository.DeliveryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,13 +16,12 @@ import java.util.Optional;
 public class DeliveryService {
 
     private final DeliveryRepository deliveryRepository;
-    private final DeliveryCompanyRepository deliveryCompanyRepository;
 
     /**
      * 배달 전체 조회
      */
-    public List<Delivery> findDeliveries(String start, String end) {
-        return deliveryRepository.findAllByDateBetween(start, end);
+    public List<Delivery> findDeliveries(DeliverySearch deliverySearch) {
+        return deliveryRepository.findAll(deliverySearch);
     }
 
     /**
@@ -32,6 +30,7 @@ public class DeliveryService {
     public Optional<Delivery> findOne(Long deliveryId) {
         return deliveryRepository.findById(deliveryId);
     }
+
     /**
      * 배달 저장
      */
@@ -56,12 +55,11 @@ public class DeliveryService {
                                String memo,
                                String orderCompanyName,
                                String orderCompanyTel,
-                               Long deliveryCompanyId,
+                               String deliveryCompanyName,
                                int price,
                                String dispatchNo) {
         Optional<Delivery> findDelivery = deliveryRepository.findById(deliveryId);
-        Optional<DeliveryCompany> findDeliveryCompany = deliveryCompanyRepository.findById(deliveryCompanyId);
-        findDelivery.get().change(no, date, time, address, toTel, toName, itemName, memo, orderCompanyName, orderCompanyTel, price, dispatchNo, findDeliveryCompany.get());
+        findDelivery.get().change(no, date, time, address, toTel, toName, itemName, memo, orderCompanyName, orderCompanyTel, price, dispatchNo, deliveryCompanyName);
     }
     /**
      * 배달 삭제

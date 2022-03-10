@@ -5,7 +5,7 @@ main > .container {
     padding: 60px 15px 0;
 }
 .main-wrap {
-    width: 1500px;
+    width: 1600px;
     margin: 0 auto;
     padding: 60px 15px 0;
 }
@@ -14,7 +14,7 @@ main > .container {
     margin: 0 auto;
     padding: 60px 15px 0;
 }
-table th{
+table th {
     font-size: 14px;
 }
 table td, table tbody input {
@@ -22,11 +22,13 @@ table td, table tbody input {
 }
 table th, table td {
     padding: 15px 5px !important;
+    vertical-align: middle;
+    font-weight: bold;
 }
 select {
     font-size: 12px !important;
 }
-table td input[type=text], table td select {
+table td select {
     width: 90%;
     margin: 0 auto;
 }

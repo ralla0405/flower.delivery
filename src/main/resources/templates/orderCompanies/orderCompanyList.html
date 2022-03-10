@@ -40,8 +40,8 @@
                 let tel = $(obj).parent("td").parent("tr").find(".tel").html();
                 $(obj).parent("td").parent("tr").parent("tbody").find(".tbl-cont.on").find(".process").html("");
                 $(obj).parent("td").parent("tr").addClass("on");
-                $(obj).parent("td").parent("tr").find(".name").html("<input type='text' id='name' name='name' class='form-control' value='" + name +"' style='width:90%;margin:0 auto;'>");
-                $(obj).parent("td").parent("tr").find(".tel").html("<input type='text' id='tel' name='tel' class='form-control' value='" + tel + "' style='width:90%;margin:0 auto;'>");
+                $(obj).parent("td").parent("tr").find(".name").html("<input type='text' id='name' name='name' class='form-control' value='" + name +"'>");
+                $(obj).parent("td").parent("tr").find(".tel").html("<input type='text' id='tel' name='tel' class='form-control' value='" + tel + "'>");
                 $(obj).parent("td").html("<input type='button' class='btn btn-secondary update' value='확인'>")
                 $(".update").click(function () {
                     if (confirm("해당 데이터를 수정하시겠습니까 ?")) {

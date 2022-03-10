@@ -24,10 +24,10 @@
             <tbody>
             <tr class="tbl-cont" th:object="${orderCompanyDto}">
                 <td>
-                    <input type="text" th:field="*{name}" class="form-control" style="width:90%;margin:0 auto;">
+                    <input type="text" th:field="*{name}" class="form-control">
                 </td>
                 <td>
-                    <input type="text" th:field="*{tel}" class="form-control" style="width:90%;margin:0 auto;">
+                    <input type="text" th:field="*{tel}" class="form-control">
                 </td>
                 <td>
                     <input type="button" class="btn btn-success" value="추가" onclick="plusBoard(this)">
@@ -67,8 +67,8 @@
             });
             function plusBoard(obj)  {
                 var html = "<tr class='tbl-cont'>";
-                html += "<td><input type='text' id='name' name='name' class='form-control' style='width:90%;margin:0 auto;'></td>";
-                html += "<td><input type='text' id='tel' name='tel' class='form-control' style='width:90%;margin:0 auto;'></td>";
+                html += "<td><input type='text' id='name' name='name' class='form-control'></td>";
+                html += "<td><input type='text' id='tel' name='tel' class='form-control'></td>";
                 html += "<td><input type='button' class='btn btn-success' value='추가' onclick='plusBoard(this)'></td>";
                 html += "</tr>";
                 $(obj).parent("td").html("<input type='button' class='btn btn-danger' value='삭제' onclick='deleteBoard(this)'>");

@@ -13,7 +13,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @ToString(of = {"no", "date", "time", "address", "deliveryCompanyName", "price",
         "itemName", "toName", "toTel", "memo", "orderCompanyName",
-        "orderCompanyTel", "dispatchNo", "status"})
+        "orderCompanyTel", "deliveryCompanyName", "dispatchNo", "status"})
 public class Delivery extends BaseEntity {
 
     @Id @GeneratedValue
@@ -54,9 +54,8 @@ public class Delivery extends BaseEntity {
     @Column(name = "order_company_tel")
     private String orderCompanyTel;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "delivery_company")
-    private DeliveryCompany deliveryCompany;
+    @Column(name = "delivery_company_name")
+    private String deliveryCompanyName;
 
     @Column(name = "price")
     private int price;
@@ -83,7 +82,7 @@ public class Delivery extends BaseEntity {
                        String orderCompanyTel,
                        int price,
                        String dispatchNo,
-                       DeliveryCompany deliveryCompany
+                       String deliveryCompanyName
                        ) {
         this.no = no;
         this.date = date;
@@ -97,7 +96,7 @@ public class Delivery extends BaseEntity {
         this.orderCompanyTel = orderCompanyTel;
         this.price = price;
         this.dispatchNo = dispatchNo;
-        this.deliveryCompany = deliveryCompany;
+        this.deliveryCompanyName = deliveryCompanyName;
     }
 
 }

@@ -7,11 +7,8 @@
     <div class="main-wrap h-100 mt-3">
         <div>
             <form th:object="${deliverySearch}" class="row justify-content-center mb-2 fs-5">
-                <div class="col-2 mb-2" th:if="${member.getRole().name() == 'ROLE_ADMIN'}">
-                    <input type="text" th:field="*{memberId}" class="form-control" placeholder="회원id"/>
-                </div>
                 <div class="col-2 mx-sm-1 mb-2">
-                    <select th:field="*{deliveryStatus}" class="form-select">
+                    <select th:field="*{deliveryStatus}" class="form-select" style="font-size:16px !important;">
                         <option value="">배송상태</option>
                         <option th:each="status : ${T(com.kirinit.service.flower.delivery.entity.DeliveryStatus).values()}"
                                 th:value="${status}"
@@ -65,16 +62,16 @@
                     <th width="13%">리본문구</th>
                     <th width="5%">발주업체</th>
                     <th width="8%">발주업체전화</th>
-                    <th width="5%">배송업체</th>
+                    <th width="7%">배송업체</th>
                     <th width="5%">배송비(원)</th>
                     <th width="3%">배차번호</th>
-                    <th width="12%">처리</th>
+                    <th width="10%">처리</th>
                     <th width="4%">인수증</th>
                 </tr>
             </thead>
             <tbody>
                 <tr class="tbl-cont" th:each="delivery : ${deliveries}">
-                    <td th:id="${delivery.id}" class="no" th:text="${delivery.no}"></td>
+                    <td class="no" th:id="${delivery.id}" th:text="${delivery.no}"></td>
                     <td class="date" th:text="${delivery.date}"></td>
                     <td class="time" th:text="${delivery.time}"></td>
                     <td class="address" th:text="${delivery.address}"></td>
@@ -84,15 +81,16 @@
                     <td class="memo" th:text="${delivery.memo}"></td>
                     <td class="orderCompanyName" th:text="${delivery.orderCompanyName}"></td>
                     <td class="orderCompanyTel" th:text="${delivery.orderCompanyTel}"></td>
-                    <td class="deliveryCompany" th:text="${delivery.deliveryCompany.name}"></td>
+                    <td class="deliveryCompanyName" th:text="${delivery.deliveryCompanyName}"></td>
                     <td class="price" th:text="${delivery.price}"></td>
                     <td class="dispatchNo" th:text="${delivery.dispatchNo}"></td>
                     <td class="process">
-                        <select id="deliveryCompanyDto" name="deliveryCompanyDto" class="form-select" onchange="getFee(this)" hidden>
+                        <select id="deliveryCompanies" name="deliveryCompanies" class="form-select" onchange="getFee(this)" hidden>
                             <option th:each="dc : ${deliveryCompanies}"
                                     th:value="${dc.getId()}"
                                     th:text="${dc.getName()}"
-                                    th:selected="${delivery.deliveryCompany.name} == ${dc.name}"></option>
+                                    th:selected="${delivery.deliveryCompanyName} == ${dc.name}"></option>
+                        </select>
                         <input type="button" class="btn btn-primary" value="수정" onclick="updateBoard(this)">
                         <input type="button" class="btn btn-danger" value="삭제" onclick="deleteBoard(this)">
                     </td>
@@ -101,6 +99,28 @@
             </tbody>
         </table>
         <script th:inline="javascript">
+            // 현재 날짜 변환
+            Date.prototype.yyyyMMdd = function() {
+                var mm = this.getMonth() + 1;
+                var dd = this.getDate();
+
+                return [this.getFullYear(),
+                    '-',
+                    (mm>9? '': '0')+ mm,
+                    '-',
+                    (dd>9? '': '0')+ dd].join('');
+            }
+            // 다음 날짜 변환
+            Date.prototype.tYyyyMMdd = function() {
+                var mm = this.getMonth() + 1;
+                var dd = this.getDate() + 1;
+
+                return [this.getFullYear(),
+                    '-',
+                    (mm>9? '': '0')+ mm,
+                    '-',
+                    (dd>9? '': '0')+ dd].join('');
+            }
             function updateBoard(obj)  {
                 let date = $(obj).parent("td").parent("tr").find(".date").html();
                 let time = $(obj).parent("td").parent("tr").find(".time").html();
@@ -111,10 +131,16 @@
                 let memo = $(obj).parent("td").parent("tr").find(".memo").html();
                 let orderCompanyName = $(obj).parent("td").parent("tr").find(".orderCompanyName").html();
                 let orderCompanyTel = $(obj).parent("td").parent("tr").find(".orderCompanyTel").html();
+                let deliveryCompanyName = $(obj).parent("td").parent("tr").find(".deliveryCompanyName").html();
                 let price = $(obj).parent("td").parent("tr").find(".price").html();
                 let dispatchNo = $(obj).parent("td").parent("tr").find(".dispatchNo").html();
-                let deliveryCompanies = $(obj).parent("td").find("#deliveryCompanyDto");
-                deliveryCompanies.prop("hidden", false);
+                let deliveryCompanies = $(obj).parent("td").find("#deliveryCompanies");
+                let deliveryCompanyVal = $(obj).parent("td").find("#deliveryCompanies").val();
+                if (deliveryCompanyVal) {
+                    deliveryCompanies.prop("hidden", false);
+                } else {
+                    deliveryCompanies = "<input type='text' id='deliveryCompanies' name='deliveryCompanyName' class='form-control' value='" + deliveryCompanyName + "'>"
+                }
 
                 $(obj).parent("td").parent("tr").parent("tbody").find(".tbl-cont.on").find(".process").html("");
                 $(obj).parent("td").parent("tr").addClass("on");
@@ -129,13 +155,15 @@
                 $(obj).parent("td").parent("tr").find(".orderCompanyTel").html("<input type='text' id='orderCompanyTel' name='orderCompanyTel' class='form-control' value='" + orderCompanyTel + "'>");
                 $(obj).parent("td").parent("tr").find(".price").html("<input type='text' id='price' name='price' class='form-control' value='" + price + "'>");
                 $(obj).parent("td").parent("tr").find(".dispatchNo").html("<input type='text' id='dispatchNo' name='dispatchNo' class='form-control' value='" + dispatchNo + "'>");
-                $(obj).parent("td").parent("tr").find(".deliveryCompany").html(deliveryCompanies);
-                $(obj).parent("td").html("<input type='button' class='btn btn-secondary update' value='확인'>")
+                $(obj).parent("td").parent("tr").find(".deliveryCompanyName").html(deliveryCompanies);
+                $(obj).parent("td").parent("tr").find(".receipt").attr("disabled", true);
+                $(obj).parent("td").html("<input type='button' class='btn btn-secondary update' value='확인'>");
                 $(".update").click(function () {
                     if (confirm("해당 데이터를 수정하시겠습니까 ?")) {
                         let html = $(".tbl-cont.on");
                         let jsonArray = [];
                         for (const htmlElement of html) {
+                            console.log($(htmlElement).find("#deliveryCompanies option:selected").html());
                             let obj = {};
                             obj.id = $(htmlElement).find(".no").attr("id");
                             obj.date = $(htmlElement).find("#date").val();
@@ -149,10 +177,7 @@
                             obj.orderCompanyTel = $(htmlElement).find("#orderCompanyTel").val();
                             obj.price = $(htmlElement).find("#price").val();
                             obj.dispatchNo = $(htmlElement).find("#dispatchNo").val();
-                            obj.deliveryCompanyDto = {
-                                id: $(htmlElement).find("#deliveryCompanyDto option:selected").val(),
-                                name: $(htmlElement).find("#deliveryCompanyDto option:selected").html()
-                            };
+                            obj.deliveryCompanyName = $(htmlElement).find("#deliveryCompanies option:selected").html() !== undefined ? $(htmlElement).find("#deliveryCompanies option:selected").html() : $(htmlElement).find("#deliveryCompanies").val();
                             obj.areaName = $(htmlElement).find("input[name=areaName]").val();
                             obj.price = Number($(htmlElement).find("input[name=price]").val());
 
@@ -196,7 +221,7 @@
             }
             function getFee(obj) {
                 let address = $(obj).parent("td").parent("tr").find("#address").val();
-                let deliveryCompanyId = $(obj).parent("td").parent("tr").find("#deliveryCompanyDto").val();
+                let deliveryCompanyId = $(obj).parent("td").parent("tr").find("#deliveryCompanies option:selected").val() === undefined ? "0" : $(obj).parent("td").parent("tr").find("#deliveryCompanies option:selected").val();
 
                 // 주소가 입력되지 않은 경우
                 if (address === "") {

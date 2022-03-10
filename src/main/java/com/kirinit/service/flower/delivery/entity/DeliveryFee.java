@@ -18,16 +18,16 @@ public class DeliveryFee extends BaseEntity {
     @Column(name = "delivery_fee_id")
     private Long id;
 
-    @JsonIgnore
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "delivery_company_id")
-    private DeliveryCompany deliveryCompany;
-
     @Column(name = "area_name")
     private String areaName;
 
     @Column(name = "price")
     private int price;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "delivery_company_id")
+    private DeliveryCompany deliveryCompany;
 
     //===비즈니스 로직===//
     /**

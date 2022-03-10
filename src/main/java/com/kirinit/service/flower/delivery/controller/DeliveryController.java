@@ -19,9 +19,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -46,15 +44,10 @@ public class DeliveryController {
 
         // 배송업체 정보
         model.addAttribute("deliveryCompanies", deliveryCompanyService.findDeliveryCompanies());
-        
-        // 배송조회 기간
-        String start = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        String end = LocalDateTime.now().plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        deliverySearch.setStartDate(LocalDateTime.now());
-        deliverySearch.setEndDate(LocalDateTime.now().plusDays(1));
 
+        System.out.println("deliverySearch.getStartDate() = " + deliverySearch.getStartDate());
         // 배송리스트
-        List<Delivery> deliveries = deliveryService.findDeliveries(start, end);
+        List<Delivery> deliveries = deliveryService.findDeliveries(deliverySearch);
         model.addAttribute("deliveries", deliveries);
 
         return "deliveries/deliveryList";
@@ -97,18 +90,20 @@ public class DeliveryController {
         for (DeliveryDto deliveryDto : deliveryDtoList) {
 
             // 해당 배송일자로 검색하여 최대 no값 구하기
-            String start = deliveryDto.getDate();
-            String end = LocalDateTime.of(
-                    LocalDate.parse(deliveryDto.getDate()).plusDays(1),
-                    LocalTime.of(0,0,0)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            List<Delivery> deliveries = deliveryService.findDeliveries(start, end);
+            String start = LocalDateTime.parse(deliveryDto.getDate()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            String end = LocalDateTime.parse(deliveryDto.getDate()).plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+            // de
+            DeliverySearch deliverySearch = DeliverySearch.builder()
+                    .startDate(start)
+                    .endDate(end)
+                    .build();
+
+            List<Delivery> deliveries = deliveryService.findDeliveries(deliverySearch);
             Delivery delivery = deliveries.stream()
                     .max(Comparator.comparing(Delivery::getNo))
                     .orElse(new Delivery());
             int no = delivery.getNo() == 0 ? 1 : (delivery.getNo() + 1);
-
-            // DeliveryCompany 조회
-            Optional<DeliveryCompany> findDeliveryCompany = deliveryCompanyService.findOne(deliveryDto.getDeliveryCompanyDto().getId());
 
             // Delivery 객체 생성
             Delivery insertDelivery = Delivery.builder()
@@ -123,7 +118,7 @@ public class DeliveryController {
                     .memo(deliveryDto.getMemo())
                     .orderCompanyName(deliveryDto.getOrderCompanyName())
                     .orderCompanyTel(deliveryDto.getOrderCompanyTel())
-                    .deliveryCompany(findDeliveryCompany.get())
+                    .deliveryCompanyName(deliveryDto.getDeliveryCompanyName())
                     .price(deliveryDto.getPrice())
                     .dispatchNo(deliveryDto.getDispatchNo())
                     .status(DeliveryStatus.READY)
@@ -161,18 +156,23 @@ public class DeliveryController {
             // 기존 date 가 다르면 no 변경
             int no = findDelivery.get().getNo();
             if (!findDelivery.get().getDate().equals(deliveryDto.getDate())) {
-                String start = deliveryDto.getDate();
-                String end = LocalDateTime.of(
-                        LocalDate.parse(deliveryDto.getDate()).plusDays(1),
-                        LocalTime.of(0,0,0)).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                List<Delivery> deliveries = deliveryService.findDeliveries(start, end);
+                String start = LocalDateTime.parse(deliveryDto.getDate()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                String end = LocalDateTime.parse(deliveryDto.getDate()).plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+                // de
+                DeliverySearch deliverySearch = DeliverySearch.builder()
+                        .startDate(start)
+                        .endDate(end)
+                        .build();
+
+                List<Delivery> deliveries = deliveryService.findDeliveries(deliverySearch);
                 Delivery delivery = deliveries.stream()
                         .max(Comparator.comparing(Delivery::getNo))
                         .orElse(new Delivery());
                 no = delivery.getNo() == 0 ? 1 : (delivery.getNo() + 1);
             }
 
-            deliveryService.updateDelivery(deliveryDto.getId(), no, deliveryDto.getDate(), deliveryDto.getTime(), deliveryDto.getAddress(), deliveryDto.getToTel(), deliveryDto.getToName(), deliveryDto.getItemName(), deliveryDto.getMemo(), deliveryDto.getOrderCompanyName(), deliveryDto.getOrderCompanyTel(), deliveryDto.getDeliveryCompanyDto().getId(), deliveryDto.getPrice(), deliveryDto.getDispatchNo());
+            deliveryService.updateDelivery(deliveryDto.getId(), no, deliveryDto.getDate(), deliveryDto.getTime(), deliveryDto.getAddress(), deliveryDto.getToTel(), deliveryDto.getToName(), deliveryDto.getItemName(), deliveryDto.getMemo(), deliveryDto.getOrderCompanyName(), deliveryDto.getOrderCompanyTel(), deliveryDto.getDeliveryCompanyName(), deliveryDto.getPrice(), deliveryDto.getDispatchNo());
         }
 
         ResponseDto responseDto = ResponseDto.builder()
@@ -224,12 +224,14 @@ public class DeliveryController {
 
         // 배송비 계산하여 반환
         int price = 0;
-        if (feeDto.getId() != null) {
+        if (feeDto.getId() != "") {
             Optional<DeliveryCompany> deliveryCompany = deliveryCompanyService.findOne(Long.valueOf(feeDto.getId()));
-            List<DeliveryFee> deliveryFees = deliveryFeeService.findDeliveryFeesByDeliveryCompany(deliveryCompany.get());
-            for (DeliveryFee deliveryFee : deliveryFees) {
-                if (deliveryFee.getAreaName().contains(feeDto.getAddress())) {
-                    price = deliveryFee.getPrice();
+            if (deliveryCompany.isPresent()) {
+                List<DeliveryFee> deliveryFees = deliveryFeeService.findDeliveryFeesByDeliveryCompany(deliveryCompany.get());
+                for (DeliveryFee deliveryFee : deliveryFees) {
+                    if (deliveryFee.getAreaName().contains(feeDto.getAddress())) {
+                        price = deliveryFee.getPrice();
+                    }
                 }
             }
         }

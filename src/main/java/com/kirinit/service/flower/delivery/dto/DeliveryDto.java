@@ -15,7 +15,7 @@ public class DeliveryDto {
     private String memo;
     private String orderCompanyName;
     private String orderCompanyTel;
-    private DeliveryCompanyDto deliveryCompanyDto;
+    private String deliveryCompanyName;
     private int price;
     private String dispatchNo;
 }
