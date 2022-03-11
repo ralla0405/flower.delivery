@@ -22,18 +22,17 @@ public class DeliveryRepositoryImpl implements DeliveryCustomRepository {
         QDelivery delivery = QDelivery.delivery;
         String start = String.valueOf(deliverySearch.getStartDate());
         String end = String.valueOf(deliverySearch.getEndDate());
-        System.out.println("start = " + start);
-        System.out.println("end = " + end);
 
         return query.selectFrom(delivery)
                 .where(statusEq(deliverySearch.getDeliveryStatus()), getBetween(delivery, start, end))
+                .orderBy(delivery.date.desc())
                 .fetch();
     }
 
     private BooleanExpression getBetween(QDelivery delivery, String start, String end) {
         if (start.equals("null")) {
             String todayStart = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            String todayEnd = LocalDateTime.now().plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            String todayEnd = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
             return delivery.date.between(todayStart, todayEnd);
         }
         return delivery.date.between(start, end);

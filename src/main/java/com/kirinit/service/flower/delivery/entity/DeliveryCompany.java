@@ -24,6 +24,9 @@ public class DeliveryCompany extends BaseEntity {
     @Column(name = "name", unique = true)
     private String name;
 
+    @Column(name = "color")
+    private String color;
+
     @OneToMany(mappedBy = "deliveryCompany", cascade = CascadeType.ALL)
     private List<DeliveryFee> deliveryFees;
 
@@ -31,7 +34,8 @@ public class DeliveryCompany extends BaseEntity {
     /**
      * 데이터 변경
      */
-    public void change(String name) {
+    public void change(String name, String color) {
         this.name = name;
+        this.color = color;
     }
 }

@@ -8,4 +8,6 @@ public class DeliveryCompanyDto {
     private Long id;
 
     private String name;
+
+    private String color;
 }

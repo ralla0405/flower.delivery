@@ -16,6 +16,7 @@ public class DeliveryDto {
     private String orderCompanyName;
     private String orderCompanyTel;
     private String deliveryCompanyName;
+    private String color;
     private int price;
     private String dispatchNo;
 }

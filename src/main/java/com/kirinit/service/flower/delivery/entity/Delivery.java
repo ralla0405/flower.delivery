@@ -57,6 +57,9 @@ public class Delivery extends BaseEntity {
     @Column(name = "delivery_company_name")
     private String deliveryCompanyName;
 
+    @Column(name = "color")
+    private String color;
+
     @Column(name = "price")
     private int price;
 
@@ -99,4 +102,17 @@ public class Delivery extends BaseEntity {
         this.deliveryCompanyName = deliveryCompanyName;
     }
 
+    /**
+     * 배송상태 변경
+     */
+    public void changeStatus(DeliveryStatus status) {
+        this.status = status;
+    }
+
+    /**
+     * 배송색상 변경
+     */
+    public void changeColor(String color) {
+        this.color = color;
+    }
 }

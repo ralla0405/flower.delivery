@@ -2,6 +2,7 @@ package com.kirinit.service.flower.delivery.service;
 
 import com.kirinit.service.flower.delivery.entity.Delivery;
 import com.kirinit.service.flower.delivery.entity.DeliverySearch;
+import com.kirinit.service.flower.delivery.entity.DeliveryStatus;
 import com.kirinit.service.flower.delivery.repository.DeliveryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -60,6 +61,24 @@ public class DeliveryService {
                                String dispatchNo) {
         Optional<Delivery> findDelivery = deliveryRepository.findById(deliveryId);
         findDelivery.get().change(no, date, time, address, toTel, toName, itemName, memo, orderCompanyName, orderCompanyTel, price, dispatchNo, deliveryCompanyName);
+    }
+
+    /**
+     * 배송 상태 수정
+     */
+    @Transactional
+    public void updateStatus(Long deliveryId, DeliveryStatus deliveryStatus) {
+        Optional<Delivery> findDelivery = deliveryRepository.findById(deliveryId);
+        findDelivery.get().changeStatus(deliveryStatus);
+    }
+
+    /**
+     * 배송 색상 수정
+     */
+    @Transactional
+    public void updateColor(Long deliveryId, String color) {
+        Optional<Delivery> findDelivery = deliveryRepository.findById(deliveryId);
+        findDelivery.get().changeColor(color);
     }
     /**
      * 배달 삭제

@@ -17,7 +17,8 @@
             <thead>
             <tr>
                 <th width="10%">순번</th>
-                <th width="70%">업체명</th>
+                <th width="40%">업체명</th>
+                <th width="30%">배차색상</th>
                 <th width="20%">처리</th>
             </tr>
             </thead>
@@ -25,6 +26,7 @@
             <tr class="tbl-cont" th:each="deliveryCompany, index : ${deliveryCompanies}">
                 <td class="id" th:id="${deliveryCompany.getId()}" th:text="${index.index + 1}"></td>
                 <td class="name" th:text="${deliveryCompany.name}"></td>
+                <td class="color"><input type="color" th:value="${deliveryCompany.color}" disabled></td>
                 <td class="process">
                     <input type="button" class="btn btn-primary" value="수정" onclick="updateBoard(this)">
                     <input type="button" class="btn btn-danger" value="삭제" onclick="deleteBoard(this)">
@@ -35,9 +37,11 @@
         <script th:inline="javascript">
             function updateBoard(obj)  {
                 let name = $(obj).parent("td").parent("tr").find(".name").html();
+                let color = $(obj).parent("td").parent("tr").find(".color").find("input").val();
                 $(obj).parent("td").parent("tr").parent("tbody").find(".tbl-cont.on").find(".process").html("");
                 $(obj).parent("td").parent("tr").addClass("on");
-                $(obj).parent("td").parent("tr").find(".name").html("<input type='text' id='name' name='name' class='form-control' value='"+ name + "'>")
+                $(obj).parent("td").parent("tr").find(".name").html("<input type='text' id='name' name='name' class='form-control' value='"+ name + "'>");
+                $(obj).parent("td").parent("tr").find(".color").html("<input type='color' id='color' name='color' value='"+ color + "'>");
                 $(obj).parent("td").html("<input type='button' class='btn btn-secondary update' value='확인'>")
 
                 $(".update").click(function () {
@@ -48,7 +52,7 @@
                             let obj = {};
                             obj.id = $(htmlElement).find(".id").attr("id");
                             obj.name = $(htmlElement).find("input[name=name]").val();
-
+                            obj.color = $(htmlElement).find("input[name=color").val();
                             if (obj.name === "") {
                                 alert("업체명을 입력해주세요 !");
                                 return false;

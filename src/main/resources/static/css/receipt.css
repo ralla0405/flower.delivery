@@ -1,0 +1,80 @@
+@page  {
+    size: A5;
+    margin: 0;
+}
+* {
+    font-weight: bold;
+    box-sizing: border-box;
+}
+body {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+}
+h1, h2, h3 {
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    line-height: 1.2;
+}
+h2 {
+    font-size: calc(1.325rem + .9vw);
+}
+h3 {
+    font-size: calc(1.3rem + .6vw);
+}
+p {
+    margin-top: 0;
+    margin-bottom: 1rem;
+}
+table {
+    width: 100%;
+    text-align: center;
+    border: 1px solid #000;
+    caption-side: bottom;
+    border-collapse: collapse;
+}
+tbody {
+    border-color: inherit;
+    border-style: solid;
+    border-width: 0;
+}
+table tr, table tr td {
+    border: 1px solid #000;
+    height: 30px;
+}
+.title-wrap {
+    width: 300px;
+    margin: 0 auto;
+    text-align: center;
+}
+.title {
+    display: inline-block;
+    text-decoration: underline;
+    font-weight: bold;
+}
+.orderFrom-wrap {
+    text-align: right;
+    line-height: 10px;
+}
+.shipDate {
+    text-align: left;
+    font-size: 20px;
+}
+.no {
+    float: left;
+    font-size: 90px;
+}
+.ship-wrap {
+    height: 190px;
+}
+.sheet {
+    text-align: center;
+}
+.sheet h3 {
+    font-weight: bold;
+}

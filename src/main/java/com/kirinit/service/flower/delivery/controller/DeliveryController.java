@@ -1,10 +1,7 @@
 package com.kirinit.service.flower.delivery.controller;
 
 import com.kirinit.service.flower.delivery.config.auth.PrincipalDetails;
-import com.kirinit.service.flower.delivery.dto.DeliveryDto;
-import com.kirinit.service.flower.delivery.dto.FeeDto;
-import com.kirinit.service.flower.delivery.dto.ResponseDto;
-import com.kirinit.service.flower.delivery.dto.TelDto;
+import com.kirinit.service.flower.delivery.dto.*;
 import com.kirinit.service.flower.delivery.entity.*;
 import com.kirinit.service.flower.delivery.service.DeliveryService;
 import com.kirinit.service.flower.delivery.service.DeliveryCompanyService;
@@ -45,12 +42,32 @@ public class DeliveryController {
         // 배송업체 정보
         model.addAttribute("deliveryCompanies", deliveryCompanyService.findDeliveryCompanies());
 
-        System.out.println("deliverySearch.getStartDate() = " + deliverySearch.getStartDate());
         // 배송리스트
         List<Delivery> deliveries = deliveryService.findDeliveries(deliverySearch);
         model.addAttribute("deliveries", deliveries);
 
         return "deliveries/deliveryList";
+    }
+
+    @GetMapping("/deliveries/{deliveryId}/receipt")
+    public String receipt(@PathVariable("deliveryId") Long deliveryId,
+                          Model model) {
+        Optional<Delivery> findOne = deliveryService.findOne(deliveryId);
+
+        ReceiptDto receiptDto = ReceiptDto.builder()
+                .no(findOne.get().getNo())
+                .date(findOne.get().getDate())
+                .time(findOne.get().getTime())
+                .itemName(findOne.get().getItemName())
+                .toTel(findOne.get().getToTel())
+                .memo(findOne.get().getMemo())
+                .address(findOne.get().getAddress())
+                .orderCompanyTel(findOne.get().getOrderCompanyTel())
+                .build();
+
+        model.addAttribute("receipt", receiptDto);
+
+        return "deliveries/receipt";
     }
 
     @GetMapping("/deliveries/new")
@@ -90,10 +107,9 @@ public class DeliveryController {
         for (DeliveryDto deliveryDto : deliveryDtoList) {
 
             // 해당 배송일자로 검색하여 최대 no값 구하기
-            String start = LocalDateTime.parse(deliveryDto.getDate()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-            String end = LocalDateTime.parse(deliveryDto.getDate()).plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+            String start = deliveryDto.getDate();
+            String end = deliveryDto.getDate();
 
-            // de
             DeliverySearch deliverySearch = DeliverySearch.builder()
                     .startDate(start)
                     .endDate(end)
@@ -119,6 +135,7 @@ public class DeliveryController {
                     .orderCompanyName(deliveryDto.getOrderCompanyName())
                     .orderCompanyTel(deliveryDto.getOrderCompanyTel())
                     .deliveryCompanyName(deliveryDto.getDeliveryCompanyName())
+                    .color("#fff")
                     .price(deliveryDto.getPrice())
                     .dispatchNo(deliveryDto.getDispatchNo())
                     .status(DeliveryStatus.READY)
@@ -137,7 +154,7 @@ public class DeliveryController {
 
     @PostMapping("/deliveries/edit")
     @ResponseBody
-    public ResponseEntity<ResponseDto> create(@RequestBody List<DeliveryDto> deliveryDtoList,
+    public ResponseEntity<ResponseDto> edit(@RequestBody List<DeliveryDto> deliveryDtoList,
                                               BindingResult result) {
 
         if (result.hasErrors()) {
@@ -156,8 +173,8 @@ public class DeliveryController {
             // 기존 date 가 다르면 no 변경
             int no = findDelivery.get().getNo();
             if (!findDelivery.get().getDate().equals(deliveryDto.getDate())) {
-                String start = LocalDateTime.parse(deliveryDto.getDate()).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-                String end = LocalDateTime.parse(deliveryDto.getDate()).plusDays(1).format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+                String start = deliveryDto.getDate();
+                String end = deliveryDto.getDate();
 
                 // de
                 DeliverySearch deliverySearch = DeliverySearch.builder()
@@ -185,7 +202,7 @@ public class DeliveryController {
 
     @PostMapping("/deliveries/delete")
     @ResponseBody
-    public ResponseEntity<ResponseDto> create(@RequestBody DeliveryDto deliveryDto,
+    public ResponseEntity<ResponseDto> delete(@RequestBody DeliveryDto deliveryDto,
                                               BindingResult result) {
 
         if (result.hasErrors()) {
@@ -210,7 +227,7 @@ public class DeliveryController {
 
     @PostMapping("/deliveries/getFee")
     @ResponseBody
-    public ResponseEntity<ResponseDto> create(@RequestBody FeeDto feeDto,
+    public ResponseEntity<ResponseDto> getFee(@RequestBody FeeDto feeDto,
                                               BindingResult result) {
 
         if (result.hasErrors()) {
@@ -249,7 +266,7 @@ public class DeliveryController {
 
     @PostMapping("/deliveries/getTel")
     @ResponseBody
-    public ResponseEntity<ResponseDto> create(@RequestBody TelDto telDto,
+    public ResponseEntity<ResponseDto> getTel(@RequestBody TelDto telDto,
                                               BindingResult result) {
 
         if (result.hasErrors()) {
@@ -268,6 +285,46 @@ public class DeliveryController {
 
         HashMap<String, String> data = new HashMap<>();
         data.put("tel", tel);
+        ResponseDto responseDto = ResponseDto.builder()
+                .resultCode("0000")
+                .resultMessage("정상 처리 되었습니다.")
+                .data(data)
+                .build();
+
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
+
+    @PostMapping("/deliveries/status")
+    @ResponseBody
+    public ResponseEntity<ResponseDto> status(@RequestBody StatusDto statusDto,
+                                              BindingResult result) {
+
+        if (result.hasErrors()) {
+            ResponseDto responseDto = ResponseDto.builder()
+                    .resultCode("9999")
+                    .resultMessage("서버 오류입니다.")
+                    .build();
+
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }
+
+        // 배송 상태 변경
+        deliveryService.updateStatus(Long.valueOf(statusDto.getId()), DeliveryStatus.valueOf(statusDto.getStatus()));
+
+        // 배송업체 조회 color
+        Optional<DeliveryCompany> findDeliveryCompany = deliveryCompanyService.findColor(statusDto.getDeliveryCompanyName());
+        HashMap<String, String> data = new HashMap<>();
+        data.put("color", findDeliveryCompany.get().getColor());
+
+        // 배송 상태에 따라 배달 색상 변경
+        if (statusDto.getStatus().equals("READY")) {
+            deliveryService.updateColor(Long.valueOf(statusDto.getId()), "#fff");
+        } else if (statusDto.getStatus().equals("COM")) {
+            deliveryService.updateColor(Long.valueOf(statusDto.getId()), findDeliveryCompany.get().getColor());
+        } else if (statusDto.getStatus().equals("CHECK")) {
+            deliveryService.updateColor(Long.valueOf(statusDto.getId()), "#808080");
+        }
+
         ResponseDto responseDto = ResponseDto.builder()
                 .resultCode("0000")
                 .resultMessage("정상 처리 되었습니다.")

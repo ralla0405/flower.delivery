@@ -79,6 +79,7 @@ public class DeliveryCompanyController {
 
             DeliveryCompany deliveryCompany = DeliveryCompany.builder()
                     .name(deliveryCompanyDto.getName())
+                    .color(deliveryCompanyDto.getColor())
                     .build();
             insertList.add(deliveryCompany);
         }
@@ -120,7 +121,7 @@ public class DeliveryCompanyController {
 
         // 배송업체 List 수정
         for (DeliveryCompanyDto deliveryCompanyDto : deliveryCompanyDtoList) {
-            deliveryCompanyService.updateDeliveryCompany(deliveryCompanyDto.getId(), deliveryCompanyDto.getName());
+            deliveryCompanyService.updateDeliveryCompany(deliveryCompanyDto.getId(), deliveryCompanyDto.getName(), deliveryCompanyDto.getColor());
         }
 
         ResponseDto responseDto = ResponseDto.builder()

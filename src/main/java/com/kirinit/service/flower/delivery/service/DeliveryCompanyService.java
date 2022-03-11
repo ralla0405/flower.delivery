@@ -32,6 +32,13 @@ public class DeliveryCompanyService {
     }
 
     /**
+     * 배송업체 단일 조회 (Name 조회)
+     */
+    public Optional<DeliveryCompany> findColor(String deliveryCompanyName) {
+        return deliveryCompanyRepository.findByName(deliveryCompanyName);
+    }
+
+    /**
      * 배송업체 중복 검토
      */
     public boolean validateDuplicateDeliveryCompany(DeliveryCompanyDto deliveryCompanyDto) {
@@ -59,9 +66,9 @@ public class DeliveryCompanyService {
      * 배송업체 수정
      */
     @Transactional
-    public void updateDeliveryCompany(Long deliveryCompanyId, String name) {
+    public void updateDeliveryCompany(Long deliveryCompanyId, String name, String color) {
         Optional<DeliveryCompany> findDeliveryCompany = deliveryCompanyRepository.findById(deliveryCompanyId);
-        findDeliveryCompany.get().change(name);
+        findDeliveryCompany.get().change(name, color);
     }
 
     /**

@@ -33,16 +33,16 @@
             </form>
             <div class="row justify-content-center mb-2">
                 <div class="col-4 btn-group">
-                    <button type="button" class="btn btn-outline-info">그저께</button>
-                    <button type="button" class="btn btn-outline-info">어제</button>
-                    <button type="button" class="btn btn-outline-info">오늘</button>
-                    <button type="button" class="btn btn-outline-info">내일</button>
-                    <button type="button" class="btn btn-outline-info">모레</button>
+                    <button type="button" class="btn btn-outline-info" onclick="goDelivery('beforeYesterday')">그저께</button>
+                    <button type="button" class="btn btn-outline-info" onclick="goDelivery('yesterday')">어제</button>
+                    <button type="button" class="btn btn-outline-info" onclick="goDelivery('today')">오늘</button>
+                    <button type="button" class="btn btn-outline-info" onclick="goDelivery('tomorrow')">내일</button>
+                    <button type="button" class="btn btn-outline-info" onclick="goDelivery('afterTomorrow')">모레</button>
                 </div>
                 <div class="col-4 btn-group">
-                    <button type="button" class="btn btn-outline-success">엑셀다운로드</button>
-                    <button type="button" class="btn btn-outline-warning">엑셀업로드</button>
-                    <button type="button" class="btn btn-outline-primary">지도보기</button>
+                    <button type="button" class="btn btn-outline-success" onclick="excelDown()">엑셀다운로드</button>
+                    <button type="button" class="btn btn-outline-warning" onclick="excelUp()">엑셀업로드</button>
+                    <button type="button" class="btn btn-outline-primary" onclick="goMap()">지도보기</button>
                 </div>
                 <div class="col-2 btn-group">
                     <button type="button" class="btn btn-dark" th:onclick="|location.href='@{deliveries/new}'|">등록하기</button>
@@ -70,7 +70,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr class="tbl-cont" th:each="delivery : ${deliveries}">
+                <tr class="tbl-cont" th:style="'background-color:' + ${delivery.color} + ';'" th:each="delivery : ${deliveries}">
                     <td class="no" th:id="${delivery.id}" th:text="${delivery.no}"></td>
                     <td class="date" th:text="${delivery.date}"></td>
                     <td class="time" th:text="${delivery.time}"></td>
@@ -92,14 +92,27 @@
                                     th:selected="${delivery.deliveryCompanyName} == ${dc.name}"></option>
                         </select>
                         <input type="button" class="btn btn-primary" value="수정" onclick="updateBoard(this)">
-                        <input type="button" class="btn btn-danger" value="삭제" onclick="deleteBoard(this)">
+                        <input th:if="${delivery.status.getKrName().equals('미배차')}" type="button" class="btn btn-warning" value="배차" onclick="checkBoard(this)">
+                        <input th:if="${delivery.status.getKrName().equals('배차')}" type="button" class="btn btn-warning" value="인수체크" onclick="checkBoard(this)">
+                        <input th:if="${delivery.status.getKrName().equals('인수체크')}" type="button" class="btn btn-warning" value="미배차" onclick="checkBoard(this)">
                     </td>
-                    <td><input type="button" class="btn btn-info receipt" value="인수증"></td>
+                    <td><input type="button" class="btn btn-info receipt" value="인쇄" onclick="receipt(this)"></td>
                 </tr>
             </tbody>
         </table>
         <script th:inline="javascript">
-            // 현재 날짜 변환
+            $(function () {
+                var startDate = $("#startDate").val();
+                var endDate = $("#endDate").val();
+                // 날짜 확인
+                if (endDate === "" && startDate === "") {
+                    startDate = new Date().yyyyMMdd();
+                    endDate = new Date().yyyyMMdd();
+                }
+                $("#startDate").val(startDate);
+                $("#endDate").val(endDate);
+            })
+            // 현재 일자 변환
             Date.prototype.yyyyMMdd = function() {
                 var mm = this.getMonth() + 1;
                 var dd = this.getDate();
@@ -110,16 +123,74 @@
                     '-',
                     (dd>9? '': '0')+ dd].join('');
             }
-            // 다음 날짜 변환
-            Date.prototype.tYyyyMMdd = function() {
-                var mm = this.getMonth() + 1;
-                var dd = this.getDate() + 1;
-
-                return [this.getFullYear(),
-                    '-',
-                    (mm>9? '': '0')+ mm,
-                    '-',
-                    (dd>9? '': '0')+ dd].join('');
+            function goDelivery(type) {
+                switch (type) {
+                    case "beforeYesterday":
+                        var startDate = new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 2).yyyyMMdd();
+                        var endDate = new Date(new Date().getTime() - 1000 * 60 * 60 * 24 * 2).yyyyMMdd();
+                        location.href = "/deliveries?deliveryStatus=&startDate=" + startDate + "&endDate=" + endDate;
+                        break;
+                    case "yesterday":
+                        var startDate = new Date(new Date().getTime() - 1000 * 60 * 60 * 24).yyyyMMdd();
+                        var endDate = new Date(new Date().getTime() - 1000 * 60 * 60 * 24).yyyyMMdd();
+                        location.href = "/deliveries?deliveryStatus=&startDate=" + startDate + "&endDate=" + endDate;
+                        break;
+                    case "today":
+                        location.href = "/deliveries";
+                        break;
+                    case "tomorrow":
+                        var startDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24).yyyyMMdd();
+                        var endDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24).yyyyMMdd();
+                        location.href = "/deliveries?deliveryStatus=&startDate=" + startDate + "&endDate=" + endDate;
+                        break;
+                    case "afterTomorrow":
+                        var startDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 2).yyyyMMdd();
+                        var endDate = new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 2).yyyyMMdd();
+                        location.href = "/deliveries?deliveryStatus=&startDate=" + startDate + "&endDate=" + endDate;
+                        break;
+                }
+            }
+            function checkBoard(obj) {
+                let type = $(obj).val();
+                let tr = $(obj).parent("td").parent("tr");
+                let id = $(obj).parent("td").parent("tr").find(".no").prop("id");
+                let deliveryCompanyName = $(obj).parent("td").parent("tr").find(".deliveryCompanyName").html();
+                let object = {};
+                object.id = id;
+                object.deliveryCompanyName = deliveryCompanyName;
+                switch (type) {
+                    case "배차":
+                        // 미배차 -> 배차
+                        object.status = "COM";
+                        break;
+                    case "인수체크":
+                        // 배차 -> 인수체크
+                        object.status = "CHECK";
+                        break;
+                    case "미배차":
+                        // 인수체크 -> 미배차
+                        object.status = "READY";
+                        break;
+                }
+                let msg = JSON.stringify(object);
+                let callback = function (data) {
+                    if (data.resultCode === "0000") {
+                        // 배차처리 일때만 tr 색상 변경
+                        if (object.status === "COM") {
+                            tr.css("background", data.data.color);
+                            $(obj).val("인수체크");
+                        } else if (object.status === "CHECK") {
+                            tr.css("background", "#808080");
+                            $(obj).val("미배차");
+                        } else if (object.status === "READY") {
+                            tr.css("background", "#FFFFFF");
+                            $(obj).val("배차");
+                        }
+                    } else {
+                        alert(data.resultMessage);
+                    }
+                }
+                doPost("/deliveries/status", msg, callback);
             }
             function updateBoard(obj)  {
                 let date = $(obj).parent("td").parent("tr").find(".date").html();
@@ -142,7 +213,7 @@
                     deliveryCompanies = "<input type='text' id='deliveryCompanies' name='deliveryCompanyName' class='form-control' value='" + deliveryCompanyName + "'>"
                 }
 
-                $(obj).parent("td").parent("tr").parent("tbody").find(".tbl-cont.on").find(".process").html("");
+                $(obj).parent("td").parent("tr").parent("tbody").find(".tbl-cont.on").find(".process").html("<input type='button' class='btn btn-danger' value='삭제' onclick='deleteBoard(this)'>");
                 $(obj).parent("td").parent("tr").addClass("on");
                 $(obj).parent("td").parent("tr").find(".date").html("<input type='date' id='date' name='date' class='form-control' value='" + date + "'>");
                 $(obj).parent("td").parent("tr").find(".time").html("<input type='text' id='time' name='time' class='form-control' value='" + time + "'>");
@@ -157,7 +228,7 @@
                 $(obj).parent("td").parent("tr").find(".dispatchNo").html("<input type='text' id='dispatchNo' name='dispatchNo' class='form-control' value='" + dispatchNo + "'>");
                 $(obj).parent("td").parent("tr").find(".deliveryCompanyName").html(deliveryCompanies);
                 $(obj).parent("td").parent("tr").find(".receipt").attr("disabled", true);
-                $(obj).parent("td").html("<input type='button' class='btn btn-secondary update' value='확인'>");
+                $(obj).parent("td").html("<input type='button' class='btn btn-secondary update' value='확인' style='margin-right:3px;'><input type='button' class='btn btn-danger' value='삭제' onclick='deleteBoard(this)'>");
                 $(".update").click(function () {
                     if (confirm("해당 데이터를 수정하시겠습니까 ?")) {
                         let html = $(".tbl-cont.on");
@@ -262,6 +333,20 @@
                     }
                 }
                 doPost("/deliveries/getTel", msg, callback);
+            }
+            function receipt(obj) {
+                var deliveryId = $(obj).parent("td").parent("tr").find(".no").prop("id");
+                var url = "/deliveries/" + deliveryId + "/receipt";
+                window.open(url, '_receipt', 'width=1000,height=1000');
+            }
+            function excelDown() {
+
+            }
+            function excelUp() {
+
+            }
+            function goMap() {
+
             }
         </script>
     </div>

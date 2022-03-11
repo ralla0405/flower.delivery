@@ -16,14 +16,18 @@
         <table class="table text-center">
             <thead>
             <tr>
-                <th width="60%">업체명</th>
-                <th width="40%">처리</th>
+                <th width="40%">업체명</th>
+                <th width="40%">배차색상</th>
+                <th width="20%">처리</th>
             </tr>
             </thead>
             <tbody>
             <tr class="tbl-cont" th:object="${deliveryCompanyDto}">
                 <td>
                     <input type="text" th:field="*{name}" class="form-control">
+                </td>
+                <td>
+                    <input type="color" id="color" name="color" value="#FFCCCC"/>
                 </td>
                 <td>
                     <input type="button" class="btn btn-success" value="추가" onclick="plusBoard(this)">
@@ -47,11 +51,12 @@
                         alert("업체명을 입력해주세요 !");
                         return false;
                     }
+                    obj.color = $(htmlElement).find("input[name=color]").val();
                     jsonArray.push(obj);
                 }
                 let msg = JSON.stringify(jsonArray);
                 let callback = function (data) {
-                    if (data.resultCode == "0000") {
+                    if (data.resultCode === "0000") {
                         alert(data.resultMessage);
                         location.href = "/deliveryCompanies";
                     } else {
@@ -63,6 +68,7 @@
             function plusBoard(obj)  {
                 var html = "<tr class='tbl-cont'>";
                 html += "<td><input type='text' id='name' name='name' class='form-control'></td>";
+                html += "<td><input type='color' id='color' name='color' value='#FFCCCC'></td>";
                 html += "<td><input type='button' class='btn btn-success' value='추가' onclick='plusBoard(this)'></td>";
                 html += "</tr>";
                 $(obj).parent("td").html("<input type='button' class='btn btn-danger' value='삭제' onclick='deleteBoard(this)'>");
