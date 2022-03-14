@@ -7,6 +7,8 @@ import com.kirinit.service.flower.delivery.service.DeliveryService;
 import com.kirinit.service.flower.delivery.service.DeliveryCompanyService;
 import com.kirinit.service.flower.delivery.service.DeliveryFeeService;
 import com.kirinit.service.flower.delivery.service.OrderCompanyService;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,10 +20,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -68,6 +68,11 @@ public class DeliveryController {
         model.addAttribute("receipt", receiptDto);
 
         return "deliveries/receipt";
+    }
+
+    @GetMapping("/deliveries/map")
+    public String map() {
+        return "deliveries/map";
     }
 
     @GetMapping("/deliveries/new")
@@ -332,5 +337,49 @@ public class DeliveryController {
                 .build();
 
         return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
+
+    @PostMapping("/deliveries/map")
+    @ResponseBody
+    public ResponseEntity<ResponseDto> maps(@RequestBody DeliverySearchDto deliverySearchDto,
+                                            BindingResult result) {
+
+        if (result.hasErrors()) {
+            ResponseDto responseDto = ResponseDto.builder()
+                    .resultCode("9999")
+                    .resultMessage("서버 오류입니다.")
+                    .build();
+
+            return new ResponseEntity<>(responseDto, HttpStatus.OK);
+        }
+
+        // 배송 전체 조회
+        DeliverySearch deliverySearch = DeliverySearch.builder()
+                .deliveryStatus(DeliveryStatus.valueOf(deliverySearchDto.getDeliveryStatus()))
+                .startDate(deliverySearchDto.getStartDate())
+                .endDate(deliverySearchDto.getEndDate())
+                .build();
+        List<Delivery> deliveries = deliveryService.findDeliveries(deliverySearch);
+
+        List<MapDto> collect = deliveries.stream()
+                .map(d -> new MapDto(d.getNo(), d.getTime(), d.getItemName(), d.getAddress()))
+                .collect(Collectors.toList());
+
+        ResponseDto responseDto = ResponseDto.builder()
+                .resultCode("0000")
+                .resultMessage("정상 처리 되었습니다.")
+                .data(collect)
+                .build();
+
+        return new ResponseEntity<>(responseDto, HttpStatus.OK);
+    }
+
+    @Data
+    @AllArgsConstructor
+    static class MapDto {
+        private int no;
+        private String time;
+        private String itemName;
+        private String address;
     }
 }

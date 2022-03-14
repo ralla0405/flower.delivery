@@ -6,10 +6,11 @@
 <main class="flex-shrink-0">
     <div class="main-wrap h-100 mt-3">
         <div>
+            <h2>배달관리 리스트</h2>
             <form th:object="${deliverySearch}" class="row justify-content-center mb-2 fs-5">
                 <div class="col-2 mx-sm-1 mb-2">
                     <select th:field="*{deliveryStatus}" class="form-select" style="font-size:16px !important;">
-                        <option value="">배송상태</option>
+                        <option value="">전체</option>
                         <option th:each="status : ${T(com.kirinit.service.flower.delivery.entity.DeliveryStatus).values()}"
                                 th:value="${status}"
                                 th:text="${status.getKrName()}">option
@@ -40,7 +41,7 @@
                     <button type="button" class="btn btn-outline-info" onclick="goDelivery('afterTomorrow')">모레</button>
                 </div>
                 <div class="col-4 btn-group">
-                    <button type="button" class="btn btn-outline-success" onclick="excelDown()">엑셀다운로드</button>
+                    <button type="button" class="btn btn-outline-success" onclick="excelDown('delivery-table')">엑셀다운로드</button>
                     <button type="button" class="btn btn-outline-warning" onclick="excelUp()">엑셀업로드</button>
                     <button type="button" class="btn btn-outline-primary" onclick="goMap()">지도보기</button>
                 </div>
@@ -49,7 +50,7 @@
                 </div>
             </div>
         </div>
-        <table class="table text-center">
+        <table class="table text-center" id="delivery-table">
             <thead>
                 <tr>
                     <th width="3%">순번</th>
@@ -85,21 +86,21 @@
                     <td class="price" th:text="${delivery.price}"></td>
                     <td class="dispatchNo" th:text="${delivery.dispatchNo}"></td>
                     <td class="process">
-                        <select id="deliveryCompanies" name="deliveryCompanies" class="form-select" onchange="getFee(this)" hidden>
-                            <option th:each="dc : ${deliveryCompanies}"
-                                    th:value="${dc.getId()}"
-                                    th:text="${dc.getName()}"
-                                    th:selected="${delivery.deliveryCompanyName} == ${dc.name}"></option>
-                        </select>
                         <input type="button" class="btn btn-primary" value="수정" onclick="updateBoard(this)">
                         <input th:if="${delivery.status.getKrName().equals('미배차')}" type="button" class="btn btn-warning" value="배차" onclick="checkBoard(this)">
                         <input th:if="${delivery.status.getKrName().equals('배차')}" type="button" class="btn btn-warning" value="인수체크" onclick="checkBoard(this)">
                         <input th:if="${delivery.status.getKrName().equals('인수체크')}" type="button" class="btn btn-warning" value="미배차" onclick="checkBoard(this)">
+
                     </td>
                     <td><input type="button" class="btn btn-info receipt" value="인쇄" onclick="receipt(this)"></td>
                 </tr>
             </tbody>
         </table>
+        <select id="deliveryCompanies" name="deliveryCompanies" class="form-select" onchange="getFee(this)" hidden>
+            <option th:each="dc : ${deliveryCompanies}"
+                    th:value="${dc.getId()}"
+                    th:text="${dc.getName()}"></option>
+        </select>
         <script th:inline="javascript">
             $(function () {
                 var startDate = $("#startDate").val();
@@ -205,10 +206,19 @@
                 let deliveryCompanyName = $(obj).parent("td").parent("tr").find(".deliveryCompanyName").html();
                 let price = $(obj).parent("td").parent("tr").find(".price").html();
                 let dispatchNo = $(obj).parent("td").parent("tr").find(".dispatchNo").html();
-                let deliveryCompanies = $(obj).parent("td").find("#deliveryCompanies");
-                let deliveryCompanyVal = $(obj).parent("td").find("#deliveryCompanies").val();
+                let deliveryCompanies = $("#deliveryCompanies option");
+                let deliveryCompanyVal = $("#deliveryCompanies").val();
                 if (deliveryCompanyVal) {
-                    deliveryCompanies.prop("hidden", false);
+                    let select = "<select id='deliveryCompanies' name='deliveryCompanies' class='form-select' onchange='getFee(this)'>";
+                    for (const deliveryCompany of deliveryCompanies) {
+                        if ($(deliveryCompany).html() === deliveryCompanyName) {
+                            select += "<option value='" + $(deliveryCompany).val() + "' selected>" + $(deliveryCompany).html() + "</option>";
+                        } else {
+                            select += "<option value='" + $(deliveryCompany).val() + "'>" + $(deliveryCompany).html() + "</option>";
+                        }
+                    }
+                    select += "</select>";
+                    deliveryCompanies = select;
                 } else {
                     deliveryCompanies = "<input type='text' id='deliveryCompanies' name='deliveryCompanyName' class='form-control' value='" + deliveryCompanyName + "'>"
                 }
@@ -339,14 +349,49 @@
                 var url = "/deliveries/" + deliveryId + "/receipt";
                 window.open(url, '_receipt', 'width=1000,height=1000');
             }
-            function excelDown() {
-
+            function excelDown(id) {
+                var tab_text = '<html xmlns:x="urn:schemas-microsoft-com:office:excel">';
+                tab_text += '<head><meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8">';
+                tab_text += '<xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>'
+                tab_text += '<x:Name>신호플라워 배달관리</x:Name>';
+                tab_text += '<x:WorksheetOptions><x:Panes></x:Panes></x:WorksheetOptions></x:ExcelWorksheet>';
+                tab_text += '</x:ExcelWorksheets></x:ExcelWorkbook></xml></head><body>';
+                tab_text += "<table border='1px'>";
+                var exportTable = $('#' + id).clone();
+                exportTable.find('input').each(function (index, elem) { $(elem).remove(); });
+                tab_text = tab_text + exportTable.html();
+                tab_text = tab_text + '</table></body></html>';
+                var data_type = 'data:application/vnd.ms-excel';
+                var ua = window.navigator.userAgent;
+                var msie = ua.indexOf("MSIE ");
+                var fileName = '신호플라워배달관리.xls';
+                //Explorer 환경에서 다운로드
+                if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
+                    if (window.navigator.msSaveBlob) {
+                        var blob = new Blob([tab_text], {
+                            type: "application/csv;charset=utf-8;"
+                        });
+                        navigator.msSaveBlob(blob, fileName);
+                    }
+                } else {
+                    var blob2 = new Blob([tab_text], {
+                        type: "application/csv;charset=utf-8;"
+                    });
+                    var filename = fileName;
+                    var elem = window.document.createElement('a');
+                    elem.href = window.URL.createObjectURL(blob2);
+                    elem.download = filename;
+                    document.body.appendChild(elem);
+                    elem.click();
+                    document.body.removeChild(elem);
+                }
             }
             function excelUp() {
 
             }
             function goMap() {
-
+                let url = "/deliveries/map";
+                window.open(url, '_map', 'width=1100,height=1000');
             }
         </script>
     </div>

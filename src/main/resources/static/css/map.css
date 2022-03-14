@@ -1,0 +1,8 @@
+#map {
+    width: 900px;
+    height: 700px;
+    display: inline-block;
+}
+#fail_list {
+    display: inline-block;
+}
