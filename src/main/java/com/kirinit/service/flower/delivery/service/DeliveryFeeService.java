@@ -57,7 +57,7 @@ public class DeliveryFeeService {
      * 배송비 등록
      */
     @Transactional
-    public void DeliverFee(List<DeliveryFee> deliveryFees) {
+    public void deliverFee(List<DeliveryFee> deliveryFees) {
         deliveryFeeRepository.saveAll(deliveryFees);
     }
 

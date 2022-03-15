@@ -146,7 +146,7 @@ public class DeliveryController {
                     .status(DeliveryStatus.READY)
                     .build();
             // DB에 저장
-            deliveryService.Delivery(insertDelivery);
+            deliveryService.delivery(insertDelivery);
         }
 
         ResponseDto responseDto = ResponseDto.builder()
@@ -318,14 +318,20 @@ public class DeliveryController {
 
         // 배송업체 조회 color
         Optional<DeliveryCompany> findDeliveryCompany = deliveryCompanyService.findColor(statusDto.getDeliveryCompanyName());
+
         HashMap<String, String> data = new HashMap<>();
-        data.put("color", findDeliveryCompany.get().getColor());
 
         // 배송 상태에 따라 배달 색상 변경
         if (statusDto.getStatus().equals("READY")) {
             deliveryService.updateColor(Long.valueOf(statusDto.getId()), "#fff");
         } else if (statusDto.getStatus().equals("COM")) {
-            deliveryService.updateColor(Long.valueOf(statusDto.getId()), findDeliveryCompany.get().getColor());
+            if (findDeliveryCompany.isPresent()) {
+                data.put("color", findDeliveryCompany.get().getColor());
+                deliveryService.updateColor(Long.valueOf(statusDto.getId()), findDeliveryCompany.get().getColor());
+            } else {
+                data.put("color", "#FFCCCC");
+                deliveryService.updateColor(Long.valueOf(statusDto.getId()), "#FFCCCC");
+            }
         } else if (statusDto.getStatus().equals("CHECK")) {
             deliveryService.updateColor(Long.valueOf(statusDto.getId()), "#808080");
         }

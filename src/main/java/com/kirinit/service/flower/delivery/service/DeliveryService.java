@@ -36,9 +36,8 @@ public class DeliveryService {
      * 배달 저장
      */
     @Transactional
-    public Long Delivery(Delivery delivery) {
+    public void delivery(Delivery delivery) {
         deliveryRepository.save(delivery);
-        return delivery.getId();
     }
 
     /**

@@ -1,6 +1,5 @@
 package com.kirinit.service.flower.delivery.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.kirinit.service.flower.delivery.entity.audit.BaseEntity;
 import lombok.*;
 
@@ -10,26 +9,35 @@ import javax.persistence.*;
 @Table(name = "member")
 @Getter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
+@ToString(of = {"name", "username", "role"})
 public class Member extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "member_id")
     private Long id;
 
-    @Column(name = "username", length = 30, unique = true)
+    @Column(name = "username")
     private String username;
 
-    @Column(name = "name", length = 100)
+    @Column(name = "name")
     private String name;
 
-    @JsonIgnore
-    @Column(name = "password", length = 100)
+    @Column(name = "password")
     private String password;
 
     @Column(name = "role")
     @Enumerated(EnumType.STRING)
     private MemberRole role; // ROLE_USER, ROLE_ADMIN
 
+    //===비즈니스 로직===//
+    /**
+     * 데이터 변경
+     */
+    public void change(String username, String name, String password) {
+        this.name = name;
+        this.username = username;
+        this.password = password;
+    }
 }

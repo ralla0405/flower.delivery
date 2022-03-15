@@ -16,10 +16,12 @@ spring:
 logging.level:
   org.hibernate.SQL: debug
   org.hibernate.type: trace
-
-# JWT
-jwt:
-  header: Authorization
-  secret: Y29tLnNlcnZpY2Uua2lyaW5pdC50ZXN0LnNwcmluZ3NlY3VyaXR5Lmp3dHRva2VuLmF1dGhlbnRpY2F0ZS5hdXRob3JpemF0aW9u
-  token-validity-in-seconds: 86400
-  #com.service.kirinit.test.springsecurity.jwttoken.authenticate.authorization
+server:
+  servlet:
+    session:
+      timeout: 10080m # 60m * 24h * 7d
+      cookie:
+        max-age: 10080m
+        name: SID
+        http-only: true
+        secure: true

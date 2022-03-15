@@ -11,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 @Configuration // IoC 빈(Bean)을 등록
 @EnableWebSecurity // 필터 체인 관리 시작 어노테이션
-//@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true) // 특정 주소 접근시 권한 및 인증을 위한 어노테이션 활성화 @Secured("ROLE_ADMIN") @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole()")
 @AllArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 

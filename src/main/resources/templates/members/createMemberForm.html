@@ -4,26 +4,86 @@
 <body class="d-flex flex-column h-100">
 <header th:replace="fragments/loginHeader :: loginHeader(${member.getName()}, ${member.getRole().name()})"></header>
 <main class="flex-shrink-0">
-    <div class="container h-100">
-        <div class="row h-100 mt-5">
-            <div class="col-6 mx-auto">
-                <form action="/members/new" th:object="${memberDto}" method="post">
-                    <div class="mb-3">
-                        <label th:for="username" class="form-label">아이디</label>
-                        <input type="text" th:field="*{username}" class="form-control" placeholder="아이디" th:class="${#fields.hasErrors('name')}? 'form-control fieldError' : 'form-control'" required="required">
-                    </div>
-                    <div class="mb-3">
-                        <label th:for="name" class="form-label">이름</label>
-                        <input type="text" th:field="*{name}" class="form-control" placeholder="이름" required="required">
-                    </div>
-                    <div class="mb-3">
-                        <label th:for="password" class="form-label">패스워드</label>
-                        <input type="password" th:field="*{password}" class="form-control" placeholder="패스워드" required="required">
-                    </div>
-                    <button type="submit" class="btn btn-lg btn-success">가입하기</button>
-                </form>
+    <div class="sub-wrap h-100 mt-3">
+        <div>
+            <h2>회원 등록하기</h2>
+            <div class="row justify-content-start mb-2">
+                <div class="col-2 btn-group">
+                    <button type="button" class="btn btn-outline-dark" th:onclick="|location.href='@{/members}'|">목록으로</button>
+                </div>
             </div>
         </div>
+        <table class="table text-center">
+            <thead>
+            <tr>
+                <th width="30%">이름</th>
+                <th width="30%">아이디</th>
+                <th width="25%">비밀번호</th>
+                <th width="15%">처리</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="tbl-cont" th:object="${memberDto}">
+                <td>
+                    <input type="text" th:field="*{name}" class="form-control">
+                </td>
+                <td>
+                    <input type="text" th:field="*{username}" class="form-control">
+                </td>
+                <td>
+                    <input type="text" th:field="*{password}" class="form-control">
+                </td>
+                <td>
+                    <input type="button" class="btn btn-success" value="추가" onclick="plusBoard(this)">
+                </td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="row justify-content-center">
+            <div class="col-2 btn-group">
+                <button type="submit" class="btn btn-outline-primary register">등록하기</button>
+            </div>
+        </div>
+        <script th:inline="javascript">
+            $(".register").click(function () {
+                let html = $(".tbl-cont");
+                let jsonArray = [];
+                for (const htmlElement of html) {
+                    let obj = {};
+                    obj.name = $(htmlElement).find("input[name=name]").val();
+                    obj.username = $(htmlElement).find("input[name=username]").val();
+                    obj.password = $(htmlElement).find("input[name=password]").val();
+                    if (obj.name === "" || obj.username === "" || obj.password === "") {
+                        alert("입력란을 모두 작성해주세요.");
+                        return false;
+                    }
+                    jsonArray.push(obj);
+                }
+                let msg = JSON.stringify(jsonArray);
+                let callback = function (data) {
+                    if (data.resultCode == "0000") {
+                        alert(data.resultMessage);
+                        location.href = "/members";
+                    } else {
+                        alert(data.resultMessage);
+                    }
+                }
+                doPost("/members/new", msg, callback);
+            });
+            function plusBoard(obj)  {
+                var html = "<tr class='tbl-cont'>";
+                html += "<td><input type='text' id='name' name='name' class='form-control'></td>";
+                html += "<td><input type='text' id='username' name='username' class='form-control'></td>";
+                html += "<td><input type='text' id='password' name='password' class='form-control'></td>";
+                html += "<td><input type='button' class='btn btn-success' value='추가' onclick='plusBoard(this)'></td>";
+                html += "</tr>";
+                $(obj).parent("td").html("<input type='button' class='btn btn-danger' value='삭제' onclick='deleteBoard(this)'>");
+                $('tbody').append(html);
+            }
+            function deleteBoard(obj) {
+                $(obj).parent("td").parent("tr").remove();
+            }
+        </script>
     </div>
 </main>
 <div th:replace="fragments/footer :: footer"/>

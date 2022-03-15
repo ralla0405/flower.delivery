@@ -1,12 +1,12 @@
 <!DOCTYPE HTML>
 <html lang="ko" class="h-100" xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/config :: config"/>
+<head th:replace="fragments/config :: config"></head>
 <body class="d-flex flex-column h-100">
 <header th:replace="fragments/loginHeader :: loginHeader(${member.getName()}, ${member.getRole().name()})"></header>
 <main class="flex-shrink-0">
     <div class="main-wrap h-100 mt-3">
         <div>
-            <h2>배달관리 리스트</h2>
+            <h2>배달 리스트</h2>
             <form th:object="${deliverySearch}" class="row justify-content-center mb-2 fs-5">
                 <div class="col-2 mx-sm-1 mb-2">
                     <select th:field="*{deliveryStatus}" class="form-select" style="font-size:16px !important;">
@@ -40,9 +40,10 @@
                     <button type="button" class="btn btn-outline-info" onclick="goDelivery('tomorrow')">내일</button>
                     <button type="button" class="btn btn-outline-info" onclick="goDelivery('afterTomorrow')">모레</button>
                 </div>
-                <div class="col-4 btn-group">
+                <div class="col-3 btn-group">
                     <button type="button" class="btn btn-outline-success" onclick="excelDown('delivery-table')">엑셀다운로드</button>
-                    <button type="button" class="btn btn-outline-warning" onclick="excelUp()">엑셀업로드</button>
+                    <label for="excel" class="btn btn-outline-warning">엑셀업로드</label>
+                    <input type="file" class="form-control" id="excel" onchange="excelUp(event)"/>
                     <button type="button" class="btn btn-outline-primary" onclick="goMap()">지도보기</button>
                 </div>
                 <div class="col-2 btn-group">
@@ -386,8 +387,44 @@
                     document.body.removeChild(elem);
                 }
             }
-            function excelUp() {
-
+            function excelUp(event) {
+                var input = event.target;
+                var reader = new FileReader();
+                reader.onload = function () {
+                    var fileData = reader.result;
+                    var wb = XLSX.read(fileData, {type: 'binary'});
+                    wb.SheetNames.forEach(function (item) {
+                        var rowObj = XLSX.utils.sheet_to_json(wb.Sheets[item]);
+                        var array = [];
+                        for (const obj of rowObj) {
+                            array.push({
+                                date: obj.배송일자,
+                                time: obj.배송시간,
+                                address: obj.주소,
+                                toTel: obj.받는분전화,
+                                toName: obj.받는분,
+                                itemName: obj.상품명,
+                                memo: obj.리본문구,
+                                orderCompanyName: obj.발주업체,
+                                orderCompanyTel: obj.발주업체전화,
+                                deliveryCompanyName: obj.배송업체,
+                                price: Number(obj.배송비),
+                                dispatchNo: obj.배차번호
+                            })
+                        }
+                        let msg = JSON.stringify(array);
+                        let callback = function (data) {
+                            if (data.resultCode == "0000") {
+                                alert(data.resultMessage);
+                                location.href = "/deliveries";
+                            } else {
+                                alert(data.resultMessage);
+                            }
+                        }
+                        doPost("/deliveries/new", msg, callback);
+                    })
+                };
+                reader.readAsBinaryString(input.files[0]);
             }
             function goMap() {
                 let url = "/deliveries/map";

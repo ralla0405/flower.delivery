@@ -2,16 +2,11 @@ package com.kirinit.service.flower.delivery.service;
 
 import com.kirinit.service.flower.delivery.dto.MemberDto;
 import com.kirinit.service.flower.delivery.entity.Member;
-import com.kirinit.service.flower.delivery.entity.MemberRole;
 import com.kirinit.service.flower.delivery.repository.MemberRepository;
-import com.kirinit.service.flower.delivery.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,25 +16,6 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
-
-    /**
-     * join
-     */
-    @Transactional
-    public Long join(Member member) {
-        validateDuplicateMember(member);
-        memberRepository.save(member);
-        return member.getId();
-    }
-
-    private void validateDuplicateMember(Member member) {
-        Optional<Member> findMember = memberRepository.findMemberByUsername(member.getUsername());
-        if (findMember.isPresent()) {
-            // 존재하는 회원인걸 표시해야함
-            throw new IllegalStateException("이미 존재하는 회원입니다.");
-        }
-    }
 
     /**
      * Member 전체 조회
@@ -55,4 +31,47 @@ public class MemberService {
         return memberRepository.findById(memberId);
     }
 
+    /**
+     * 회원등록
+     */
+    @Transactional
+    public void member(List<Member> members) {
+        System.out.println("members = " + members);
+        memberRepository.saveAll(members);
+    }
+
+    /**
+     * 회원아이디 중복 검토
+     */
+    public boolean validateDuplicateMember(MemberDto memberDto) {
+        Optional<Member> findMember = memberRepository.findMemberByUsername(memberDto.getUsername());
+        if (findMember.isPresent()) {
+            if (memberDto.getId() != null) {
+                return !findMember.get().getUsername().equals(memberDto.getUsername());
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 회원 수정
+     */
+    @Transactional
+    public void updateMember(Long memberId, String username, String name, String password) {
+        Optional<Member> findMember = memberRepository.findById(memberId);
+        System.out.println("findMember = " + findMember);
+        System.out.println("username = " + username);
+        System.out.println("name = " + name);
+        System.out.println("password = " + password);
+        findMember.get().change(username, name, password);
+    }
+
+    /**
+     * 회원 삭제
+     */
+    @Transactional
+    public void deleteMember(Long memberId) {
+        memberRepository.deleteById(memberId);
+    }
 }

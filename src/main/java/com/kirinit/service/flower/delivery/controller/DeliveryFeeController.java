@@ -1,7 +1,6 @@
 package com.kirinit.service.flower.delivery.controller;
 
 import com.kirinit.service.flower.delivery.config.auth.PrincipalDetails;
-import com.kirinit.service.flower.delivery.dto.DeliveryCompanyDto;
 import com.kirinit.service.flower.delivery.dto.DeliveryFeeDto;
 import com.kirinit.service.flower.delivery.dto.ResponseDto;
 import com.kirinit.service.flower.delivery.entity.DeliveryCompany;
@@ -100,7 +99,7 @@ public class DeliveryFeeController {
             insertList.add(deliveryFee);
         }
 
-        deliveryFeeService.DeliverFee(insertList);
+        deliveryFeeService.deliverFee(insertList);
 
         ResponseDto responseDto = ResponseDto.builder()
                 .resultCode("0000")

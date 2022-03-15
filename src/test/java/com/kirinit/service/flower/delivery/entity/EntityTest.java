@@ -80,7 +80,7 @@ public class EntityTest {
                 .address("경기도 광주시 신현리 968-2 302호")
                 .status(DeliveryStatus.READY)
                 .build();
-        deliveryService.Delivery(delivery);
+        deliveryService.delivery(delivery);
 
         //then
         // 한번에 조회 하는 방법 찾아야함
