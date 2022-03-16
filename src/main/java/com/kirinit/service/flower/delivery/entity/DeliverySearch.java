@@ -2,9 +2,6 @@ package com.kirinit.service.flower.delivery.entity;
 
 import lombok.Builder;
 import lombok.Data;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.time.LocalDateTime;
 
 @Data
 @Builder

@@ -1,6 +1,5 @@
 package com.kirinit.service.flower.delivery.config;
 
-import com.kirinit.service.flower.delivery.entity.Member;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;

@@ -4,6 +4,9 @@
 main > .container {
     padding: 60px 15px 0;
 }
+.main-logo {
+    text-align: center;
+}
 .main-wrap {
     width: 1600px;
     margin: 0 auto;

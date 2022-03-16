@@ -2,8 +2,6 @@ package com.kirinit.service.flower.delivery.config.auth;
 
 import com.kirinit.service.flower.delivery.entity.Member;
 import com.kirinit.service.flower.delivery.repository.MemberRepository;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

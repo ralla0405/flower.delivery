@@ -420,6 +420,7 @@
                             } else {
                                 alert(data.resultMessage);
                             }
+                            $("input[type=file]").val();
                         }
                         doPost("/deliveries/new", msg, callback);
                     })

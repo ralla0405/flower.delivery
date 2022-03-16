@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-
 public interface DeliveryFeeRepository extends JpaRepository<DeliveryFee, Long> {
 
     // 배송업체, 구역명으로 존재하는지 여부

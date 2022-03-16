@@ -7,19 +7,14 @@ import com.kirinit.service.flower.delivery.entity.Member;
 import com.kirinit.service.flower.delivery.entity.MemberRole;
 import com.kirinit.service.flower.delivery.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +25,14 @@ public class MemberController {
     private final MemberService memberService;
     private final BCryptPasswordEncoder passwordEncoder;
 
-    @GetMapping("/login")
-    public String login(@AuthenticationPrincipal PrincipalDetails principal) {
+    @GetMapping(value = {"/login", "/"})
+    public String login(@RequestParam(value = "error", required = false) String error,
+                        @RequestParam(value = "exception", required = false) String exception,
+                        @AuthenticationPrincipal PrincipalDetails principal,
+                        Model model) {
+        model.addAttribute("error", error);
+        model.addAttribute("exception", exception);
+
         if (principal != null) {
             return "redirect:/deliveries";
         } else {

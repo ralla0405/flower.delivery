@@ -2,7 +2,6 @@ package com.kirinit.service.flower.delivery.repository;
 
 import com.kirinit.service.flower.delivery.entity.*;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 
@@ -25,7 +24,7 @@ public class DeliveryRepositoryImpl implements DeliveryCustomRepository {
 
         return query.selectFrom(delivery)
                 .where(statusEq(deliverySearch.getDeliveryStatus()), getBetween(delivery, start, end))
-                .orderBy(delivery.date.desc())
+                .orderBy(delivery.date.desc(), delivery.no.desc())
                 .fetch();
     }
 

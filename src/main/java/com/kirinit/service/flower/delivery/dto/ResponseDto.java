@@ -1,11 +1,7 @@
 package com.kirinit.service.flower.delivery.dto;
 
-import com.kirinit.service.flower.delivery.entity.Delivery;
 import lombok.Builder;
 import lombok.Data;
-
-import java.util.HashMap;
-import java.util.List;
 
 @Data
 @Builder

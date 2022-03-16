@@ -2,6 +2,7 @@ package com.kirinit.service.flower.delivery.service;
 
 import com.kirinit.service.flower.delivery.dto.MemberDto;
 import com.kirinit.service.flower.delivery.entity.Member;
+import com.kirinit.service.flower.delivery.entity.MemberRole;
 import com.kirinit.service.flower.delivery.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,7 +22,7 @@ public class MemberService {
      * Member 전체 조회
      */
     public List<Member> findMembers() {
-        return memberRepository.findAll();
+        return memberRepository.findAllByRole(MemberRole.ROLE_USER);
     }
 
     /**
