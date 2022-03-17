@@ -11,9 +11,6 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString(of = {"no", "date", "time", "address", "deliveryCompanyName", "price",
-        "itemName", "toName", "toTel", "memo", "orderCompanyName",
-        "orderCompanyTel", "deliveryCompanyName", "dispatchNo", "status"})
 public class Delivery extends BaseEntity {
 
     @Id @GeneratedValue
@@ -68,6 +65,10 @@ public class Delivery extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private DeliveryStatus status;
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
 
     //===비즈니스 로직===//
     /**
