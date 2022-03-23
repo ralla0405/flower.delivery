@@ -251,7 +251,7 @@ public class DeliveryController {
             if (deliveryCompany.isPresent()) {
                 List<DeliveryFee> deliveryFees = deliveryFeeService.findDeliveryFeesByDeliveryCompany(deliveryCompany.get());
                 for (DeliveryFee deliveryFee : deliveryFees) {
-                    if (deliveryFee.getAreaName().contains(feeDto.getAddress())) {
+                    if (feeDto.getAddress().contains(deliveryFee.getAreaName())) {
                         price = deliveryFee.getPrice();
                     }
                 }
