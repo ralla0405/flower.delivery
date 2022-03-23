@@ -53,6 +53,9 @@
                     obj.name = $(htmlElement).find("input[name=name]").val();
                     obj.username = $(htmlElement).find("input[name=username]").val();
                     obj.password = $(htmlElement).find("input[name=password]").val();
+                    obj._csrf = {
+                        parameterName: [[${_csrf.token}]]
+                    }
                     if (obj.name === "" || obj.username === "" || obj.password === "") {
                         alert("입력란을 모두 작성해주세요.");
                         return false;

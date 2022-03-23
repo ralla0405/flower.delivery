@@ -10,14 +10,15 @@
                 <div class="main-logo mb-3">
                     <img src="img/mainimg.jpg" class="img-fluid" alt="...">
                 </div>
-                <form action="/loginProc" method="POST">
+                <form action="/loginProc" method="post">
                     <div class="mb-3">
                         <label th:for="username" class="form-label fw-bold">아이디</label>
-                        <input type="text" name="username" class="form-control" placeholder="아이디" required="required">
+                        <input type="text" name="username" class="form-control" placeholder="아이디" required="required"/>
                     </div>
                     <div class="mb-3">
                         <label th:for="password" class="form-label fw-bold">패스워드</label>
-                        <input type="password" name="password" class="form-control" placeholder="패스워드" required="required">
+                        <input type="password" name="password" class="form-control" placeholder="패스워드" required="required"/>
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                     </div>
                     <span th:if="${error}">
                         <p id="valid" class="alert alert-danger" th:text="${exception}"></p>

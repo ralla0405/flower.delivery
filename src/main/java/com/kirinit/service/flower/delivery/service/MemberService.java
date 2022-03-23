@@ -37,7 +37,6 @@ public class MemberService {
      */
     @Transactional
     public void member(List<Member> members) {
-        System.out.println("members = " + members);
         memberRepository.saveAll(members);
     }
 
@@ -61,10 +60,6 @@ public class MemberService {
     @Transactional
     public void updateMember(Long memberId, String username, String name, String password) {
         Optional<Member> findMember = memberRepository.findById(memberId);
-        System.out.println("findMember = " + findMember);
-        System.out.println("username = " + username);
-        System.out.println("name = " + name);
-        System.out.println("password = " + password);
         findMember.get().change(username, name, password);
     }
 

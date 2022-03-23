@@ -22,6 +22,7 @@ import java.util.List;
 @Controller
 @RequiredArgsConstructor
 public class MemberController {
+
     private final MemberService memberService;
     private final BCryptPasswordEncoder passwordEncoder;
 

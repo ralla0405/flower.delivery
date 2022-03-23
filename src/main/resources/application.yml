@@ -1,16 +1,18 @@
 spring:
   datasource:
-    url: jdbc:mariadb://localhost:3306/delivery
+#    url: jdbc:mariadb://localhost:3306/delivery
+    url: jdbc:mariadb://13.125.244.166:3334/delivery
     username: root
     password: tmdghks10!
     driver-class-name: org.mariadb.jdbc.Driver
   jpa:
+    generate-ddl: true
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
-        format_sql: true
-#        use_sql_comments: true
+        format_sql: false
+        use_sql_comments: false
     database-platform: org.hibernate.dialect.MariaDB103Dialect
     defer-datasource-initialization: true
 logging.level:
@@ -22,6 +24,5 @@ server:
       timeout: 10080m # 60m * 24h * 7d
       cookie:
         max-age: 10080m
-        name: SID
         http-only: true
-        secure: true
+        secure: false
