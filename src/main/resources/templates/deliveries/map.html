@@ -71,7 +71,6 @@
             startDate: start,
             endDate: end
         }
-        let msg = JSON.stringify(object);
         let callback = function (data) {
             if (data.resultCode === "0000") {
                 $('#fail_list').empty();
@@ -140,7 +139,7 @@
                 alert(data.resultMessage);
             }
         }
-        doPost('/deliveries/map', msg, callback);
+        doPost('/deliveries/map', object, callback);
     }
     // 현재 일자 변환
     Date.prototype.yyyyMMdd = function() {

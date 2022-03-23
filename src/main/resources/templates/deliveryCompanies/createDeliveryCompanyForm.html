@@ -54,7 +54,6 @@
                     obj.color = $(htmlElement).find("input[name=color]").val();
                     jsonArray.push(obj);
                 }
-                let msg = JSON.stringify(jsonArray);
                 let callback = function (data) {
                     if (data.resultCode === "0000") {
                         alert(data.resultMessage);
@@ -63,7 +62,7 @@
                         alert(data.resultMessage);
                     }
                 }
-                doPost("/deliveryCompanies/new", msg, callback);
+                doPost("/deliveryCompanies/new", jsonArray, callback);
             });
             function plusBoard(obj)  {
                 var html = "<tr class='tbl-cont'>";

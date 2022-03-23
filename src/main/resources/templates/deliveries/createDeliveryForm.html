@@ -106,7 +106,6 @@
                     obj.dispatchNo = $(htmlElement).find("input[name=dispatchNo]").val();
                     jsonArray.push(obj);
                 }
-                let msg = JSON.stringify(jsonArray);
                 let callback = function (data) {
                     if (data.resultCode == "0000") {
                         alert(data.resultMessage);
@@ -115,7 +114,7 @@
                         alert(data.resultMessage);
                     }
                 }
-                doPost("/deliveries/new", msg, callback);
+                doPost("/deliveries/new", jsonArray, callback);
             });
             function plusBoard(obj)  {
                 let date = $(obj).parent("td").parent("tr").find("input[name=date]").val();
@@ -157,7 +156,6 @@
                     address: address,
                     id: deliveryCompanyId
                 }
-                let msg = JSON.stringify(json);
                 let callback = function (data) {
                     if (data.resultCode == "0000") {
                         let price = data.data.price;
@@ -166,7 +164,7 @@
                         alert(data.resultMessage);
                     }
                 }
-                doPost("/deliveries/getFee", msg, callback);
+                doPost("/deliveries/getFee", json, callback);
             }
             function getTel(obj) {
                 let name = $(obj).parent("td").parent("tr").find("#orderCompanyName").val();
@@ -177,7 +175,6 @@
                 let json = {
                     name: name
                 }
-                let msg = JSON.stringify(json);
                 let callback = function (data) {
                     if (data.resultCode == "0000") {
                         let tel = data.data.tel;
@@ -186,7 +183,7 @@
                         alert(data.resultMessage);
                     }
                 }
-                doPost("/deliveries/getTel", msg, callback);
+                doPost("/deliveries/getTel", json, callback);
             }
         </script>
     </div>

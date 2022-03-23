@@ -71,7 +71,6 @@
                     }
                     jsonArray.push(obj);
                 }
-                let msg = JSON.stringify(jsonArray);
                 let callback = function (data) {
                     if (data.resultCode == "0000") {
                         alert(data.resultMessage);
@@ -80,7 +79,7 @@
                         alert(data.resultMessage);
                     }
                 }
-                doPost("/deliveryFees/new", msg, callback);
+                doPost("/deliveryFees/new", jsonArray, callback);
             });
             function plusBoard(obj)  {
                 var select = $(obj).parent("td").parent("tr").find("select").html();

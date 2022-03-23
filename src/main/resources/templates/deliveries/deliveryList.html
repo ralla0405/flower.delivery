@@ -174,7 +174,6 @@
                         object.status = "READY";
                         break;
                 }
-                let msg = JSON.stringify(object);
                 let callback = function (data) {
                     if (data.resultCode === "0000") {
                         // 배차처리 일때만 tr 색상 변경
@@ -192,7 +191,7 @@
                         alert(data.resultMessage);
                     }
                 }
-                doPost("/deliveries/status", msg, callback);
+                doPost("/deliveries/status", object, callback);
             }
             function updateBoard(obj)  {
                 let date = $(obj).parent("td").parent("tr").find(".date").html();
@@ -245,7 +244,6 @@
                         let html = $(".tbl-cont.on");
                         let jsonArray = [];
                         for (const htmlElement of html) {
-                            console.log($(htmlElement).find("#deliveryCompanies option:selected").html());
                             let obj = {};
                             obj.id = $(htmlElement).find(".no").attr("id");
                             obj.date = $(htmlElement).find("#date").val();
@@ -262,11 +260,8 @@
                             obj.deliveryCompanyName = $(htmlElement).find("#deliveryCompanies option:selected").html() !== undefined ? $(htmlElement).find("#deliveryCompanies option:selected").html() : $(htmlElement).find("#deliveryCompanies").val();
                             obj.areaName = $(htmlElement).find("input[name=areaName]").val();
                             obj.price = Number($(htmlElement).find("input[name=price]").val());
-
                             jsonArray.push(obj);
                         }
-                        let msg = JSON.stringify(jsonArray);
-                        console.log(msg);
                         let callback = function (data) {
                             if (data.resultCode == "0000") {
                                 alert(data.resultMessage);
@@ -275,7 +270,7 @@
                                 alert(data.resultMessage);
                             }
                         }
-                        doPost("/deliveries/edit", msg, callback);
+                        doPost("/deliveries/edit", jsonArray, callback);
                     } else {
                         return false;
                     }
@@ -286,8 +281,6 @@
                 if (confirm("해당 데이터를 삭제하시겠습니까 ?")) {
                     let obj = {};
                     obj.id = id;
-                    let msg = JSON.stringify(obj);
-
                     let callback = function (data) {
                         if (data.resultCode == "0000") {
                             alert(data.resultMessage);
@@ -296,7 +289,7 @@
                             alert(data.resultMessage);
                         }
                     }
-                    doPost("/deliveries/delete", msg, callback);
+                    doPost("/deliveries/delete", obj, callback);
                 } else {
                     return false;
                 }
@@ -314,7 +307,6 @@
                     address: address,
                     id: deliveryCompanyId
                 }
-                let msg = JSON.stringify(json);
                 let callback = function (data) {
                     if (data.resultCode == "0000") {
                         let price = data.data.price;
@@ -323,7 +315,7 @@
                         alert(data.resultMessage);
                     }
                 }
-                doPost("/deliveries/getFee", msg, callback);
+                doPost("/deliveries/getFee", json, callback);
             }
             function getTel(obj) {
                 let name = $(obj).parent("td").parent("tr").find("#orderCompanyName").val();
@@ -334,7 +326,6 @@
                 let json = {
                     name: name
                 }
-                let msg = JSON.stringify(json);
                 let callback = function (data) {
                     if (data.resultCode == "0000") {
                         let tel = data.data.tel;
@@ -343,7 +334,7 @@
                         alert(data.resultMessage);
                     }
                 }
-                doPost("/deliveries/getTel", msg, callback);
+                doPost("/deliveries/getTel", json, callback);
             }
             function receipt(obj) {
                 var deliveryId = $(obj).parent("td").parent("tr").find(".no").prop("id");
@@ -412,7 +403,6 @@
                                 dispatchNo: obj.배차번호
                             })
                         }
-                        let msg = JSON.stringify(array);
                         let callback = function (data) {
                             if (data.resultCode == "0000") {
                                 alert(data.resultMessage);
@@ -422,7 +412,7 @@
                             }
                             $("input[type=file]").val();
                         }
-                        doPost("/deliveries/new", msg, callback);
+                        doPost("/deliveries/new", array, callback);
                     })
                 };
                 reader.readAsBinaryString(input.files[0]);

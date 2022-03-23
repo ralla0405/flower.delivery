@@ -53,16 +53,12 @@
                     obj.name = $(htmlElement).find("input[name=name]").val();
                     obj.username = $(htmlElement).find("input[name=username]").val();
                     obj.password = $(htmlElement).find("input[name=password]").val();
-                    obj._csrf = {
-                        parameterName: [[${_csrf.token}]]
-                    }
                     if (obj.name === "" || obj.username === "" || obj.password === "") {
                         alert("입력란을 모두 작성해주세요.");
                         return false;
                     }
                     jsonArray.push(obj);
                 }
-                let msg = JSON.stringify(jsonArray);
                 let callback = function (data) {
                     if (data.resultCode == "0000") {
                         alert(data.resultMessage);
@@ -71,7 +67,7 @@
                         alert(data.resultMessage);
                     }
                 }
-                doPost("/members/new", msg, callback);
+                doPost("/members/new", jsonArray, callback);
             });
             function plusBoard(obj)  {
                 var html = "<tr class='tbl-cont'>";
@@ -89,6 +85,5 @@
         </script>
     </div>
 </main>
-<div th:replace="fragments/footer :: footer"/>
 </body>
 </html>

@@ -5,12 +5,15 @@
  * @param result
  */
 function doPost(url, inputData, result) {
+    var token = $("meta[name=_csrf]").attr("content");
+    var header = $("meta[name=_csrf_header]").attr("content");
+    $(document).ajaxSend(function (e, xhr, options) { xhr.setRequestHeader(header, token)});
     var request = $.ajax({
         url: url,
         type: 'POST',
         dataType: 'json',
         contentType: 'application/json',
-        data: inputData
+        data: JSON.stringify(inputData)
     });
 
     request.done(result);
