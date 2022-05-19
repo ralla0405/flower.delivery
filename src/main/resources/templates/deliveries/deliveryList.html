@@ -58,9 +58,9 @@
                     <th width="6%">배송일자</th>
                     <th width="5%">배송시간</th>
                     <th width="13%">주소</th>
+                    <th width="5%">상품명</th>
                     <th width="5%">받는분</th>
                     <th width="8%">받는분 전화</th>
-                    <th width="5%">상품명</th>
                     <th width="13%">리본문구</th>
                     <th width="5%">발주업체</th>
                     <th width="8%">발주업체전화</th>
@@ -77,9 +77,9 @@
                     <td class="date" th:text="${delivery.date}"></td>
                     <td class="time" th:text="${delivery.time}"></td>
                     <td class="address" th:text="${delivery.address}"></td>
+                    <td class="itemName" th:text="${delivery.itemName}"></td>
                     <td class="toName" th:text="${delivery.toName}"></td>
                     <td class="toTel" th:text="${delivery.toTel}"></td>
-                    <td class="itemName" th:text="${delivery.itemName}"></td>
                     <td class="memo" th:text="${delivery.memo}"></td>
                     <td class="orderCompanyName" th:text="${delivery.orderCompanyName}"></td>
                     <td class="orderCompanyTel" th:text="${delivery.orderCompanyTel}"></td>
@@ -418,7 +418,9 @@
                 reader.readAsBinaryString(input.files[0]);
             }
             function goMap() {
-                let url = "/deliveries/map";
+                let url = "/deliveries/map?";
+                url += "startDate=" + $("input[name=startDate]").val();
+                url += "&endDate=" + $("input[name=endDate]").val();
                 window.open(url, '_map', 'width=1100,height=1000');
             }
         </script>

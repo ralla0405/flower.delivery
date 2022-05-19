@@ -19,9 +19,9 @@
                 <th width="8%">배송일자</th>
                 <th width="5%">배송시간</th>
                 <th width="14%">주소</th>
+                <th width="5%">상품명</th>
                 <th width="5%">받는분</th>
                 <th width="9%">받는분 전화</th>
-                <th width="5%">상품명</th>
                 <th width="14%">리본문구</th>
                 <th width="5%">발주업체</th>
                 <th width="9%">발주업체전화</th>
@@ -43,13 +43,13 @@
                     <input type="text" th:field="*{address}" class="form-control" onblur="getFee(this)">
                 </td>
                 <td>
+                    <input type="text" th:field="*{itemName}" class="form-control">
+                </td>
+                <td>
                     <input type="text" th:field="*{toName}" class="form-control">
                 </td>
                 <td>
                     <input type="text" th:field="*{toTel}" class="form-control">
-                </td>
-                <td>
-                    <input type="text" th:field="*{itemName}" class="form-control">
                 </td>
                 <td>
                     <input type="text" th:field="*{memo}" class="form-control">
