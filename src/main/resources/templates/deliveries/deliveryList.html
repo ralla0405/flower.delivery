@@ -97,7 +97,7 @@
                 </tr>
             </tbody>
         </table>
-        <select id="deliveryCompanies" name="deliveryCompanies" class="form-select" onchange="getFee(this)" hidden>
+        <select id="deliveryCompaniesDefault" name="deliveryCompaniesDefault" class="form-select" onchange="getFee(this)" hidden>
             <option th:each="dc : ${deliveryCompanies}"
                     th:value="${dc.getId()}"
                     th:text="${dc.getName()}"></option>
@@ -206,11 +206,14 @@
                 let deliveryCompanyName = $(obj).parent("td").parent("tr").find(".deliveryCompanyName").html();
                 let price = $(obj).parent("td").parent("tr").find(".price").html();
                 let dispatchNo = $(obj).parent("td").parent("tr").find(".dispatchNo").html();
-                let deliveryCompanies = $("#deliveryCompanies option");
-                let deliveryCompanyVal = $("#deliveryCompanies").val();
+                let deliveryCompanies = $("#deliveryCompaniesDefault option");
+                let deliveryCompanyVal = $(obj).parent("td").parent("tr").find(".deliveryCompanyName").html();
+                console.log(deliveryCompanies, deliveryCompanyVal);
                 if (deliveryCompanyVal) {
+                    // $(obj).parent("td").parent("tr").find("")
                     let select = "<select id='deliveryCompanies' name='deliveryCompanies' class='form-select' onchange='getFee(this)'>";
                     for (const deliveryCompany of deliveryCompanies) {
+                        console.log($(deliveryCompany).html());
                         if ($(deliveryCompany).html() === deliveryCompanyName) {
                             select += "<option value='" + $(deliveryCompany).val() + "' selected>" + $(deliveryCompany).html() + "</option>";
                         } else {
